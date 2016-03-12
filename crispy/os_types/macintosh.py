@@ -1,66 +1,79 @@
 import platform
 import datetime
 import os
+import subprocess
+import socket
+import sys
+import array
+import struct
+import fcntl
+
+from os import listdir
 
 def enum_os():
     print "[*] Operating System Info:"
     print "\tComputer Name:", platform.node()
     print "\tKernel Version:", platform.system(), platform.release()
-    print "\tSystem Date:", datetime.datetime.now().time()
+    print "\tSystem Date:", datetime.datetime.now()
+    #print "\tUptime:", subprocess.call(["uptime", "|", "cut", "-d\' \'", "-f2-5"])
     print "\tProcessor Type:", platform.processor()
     print "\tCPU Architecture:", platform.machine()
     print "\tPATH:", os.getenv('PATH')
     print "\tCurrent User:", os.getenv('USER')
     print "\tHOME:", os.getenv('HOME')
-    print "\tSHELL:", os.getenv('SHELL')  
+    print "\tSHELL:", os.getenv('SHELL')
+    print "\n"
+    
+def enum_interfaces():
+    print "[*] Network Interface[s]:"
+    #getifaddrs
 
 def enum_users():
     print "[*] Users:"
-    print 
+    #dscl . -ls /Users
+    #http://superuser.com/questions/592921/mac-osx-users-vs-dscl-command-to-list-user/621055
+    #create a hash set of ls /Users/ and dscl . -ls /Users leaving only unique users. then run commands
+    #from link above on those users
 
 def enum_applications():
     print "[*] Installed Applications:"
+    apps = listdir('/Applications')
+    for app in apps:
+        if app[0] == '.':
+            continue
+        else:
+            print "\t", app
+    print "\n"
     
 def enum_drives():
-    print "drives"
-        
-# https://www.offensive-security.com/metasploit-unleashed/os-post-gather-modules/
-# msf > use post/osx/gather/enum_osx
-# msf  post(enum_osx) > run
-# 
-# [*] Running module against Victim.local
-# [*] This session is running as root!
-# [*] Saving all data to /root/.msf4/logs/post/enum_osx/Victim.local_20120926.3521
-# [*]     Enumerating OS
-# [*]     Enumerating Network
-# [*]     Enumerating Bluetooth
-# [*]     Enumerating Ethernet
-# [*]     Enumerating Printers
-# [*]     Enumerating USB
-# [*]     Enumerating Airport
-# [*]     Enumerating Firewall
-# [*]     Enumerating Known Networks
-# [*]     Enumerating Applications
-# [*]     Enumerating Development Tools
-# [*]     Enumerating Frameworks
-# [*]     Enumerating Logs
-# [*]     Enumerating Preference Panes
-# [*]     Enumerating StartUp
-# [*]     Enumerating TCP Connections
-# [*]     Enumerating UDP Connections
-# [*]     Enumerating Environment Variables
-# [*]     Enumerating Last Boottime
-# [*]     Enumerating Current Activity
-# [*]     Enumerating Process List
-# [*]     Enumerating Users
-# [*]     Enumerating Groups
-# [*] .ssh Folder is present for Victim
-# [*]     Downloading id_dsa
-# [*]     Downloading known_hosts
-# [*] .gnupg Folder is present for Victim
-# [*]     Downloading ls: /Users/Victim/.gnupg: No such file or directory
-# [*] Capturing screenshot
-# [*] Capturing screenshot for each loginwindow process since privilege is root
-# [*]     Capturing for PID:2508
-# ...snip...
-# [*] Post module execution completed
+    print "[*] Disk Partitions:"
+    partitions = listdir('/Volumes')
+    for disk in partitions:
+        print "\t", disk
+    print "\n"
+    
+def enum_printers():
+    print "[*] Printers:"
+    printers = listdir('/private/etc/cups/ppd/')
+    for printer in printers:
+        print "\t", printer[:-4]
+    print "\n"
+    #ls -al /Library/Printers
+    #lpinfo -m
+
+def enum_reboot_history():
+    print "[*] Reboot History:"
+    subprocess.call(["last", "reboot"])
+
+def enum_usb():
+    print "[*] USBs:"
+    #system_profiler SPUSBDataType
+    #ioreg -p IOUSB -l -w 0 | grep "USB Product Name"
+
+def get_process_list():
+    print "[*] Process List:"
+    subprocess.call(["ps", "aux"])
+    print "\n"
+    
+def get_ssh_keys():
+    print "[*] Searching for ssh keys:"
