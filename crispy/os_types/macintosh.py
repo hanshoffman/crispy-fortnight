@@ -1,8 +1,28 @@
+import platform
+import datetime
+import os
+
+def enum_os():
+    print "[*] Operating System Info:"
+    print "\tComputer Name:", platform.node()
+    print "\tKernel Version:", platform.system(), platform.release()
+    print "\tSystem Date:", datetime.datetime.now().time()
+    print "\tProcessor Type:", platform.processor()
+    print "\tCPU Architecture:", platform.machine()
+    print "\tPATH:", os.getenv('PATH')
+    print "\tCurrent User:", os.getenv('USER')
+    print "\tHOME:", os.getenv('HOME')
+    print "\tSHELL:", os.getenv('SHELL')  
+
 def enum_users():
-    return "users"
+    print "[*] Users:"
+    print 
 
 def enum_applications():
-    print "applications"
+    print "[*] Installed Applications:"
+    
+def enum_drives():
+    print "drives"
         
 # https://www.offensive-security.com/metasploit-unleashed/os-post-gather-modules/
 # msf > use post/osx/gather/enum_osx

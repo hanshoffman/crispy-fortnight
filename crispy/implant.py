@@ -1,7 +1,7 @@
 import platform
 
-from os_types.mac_os import enum_users
+from os_types.macintosh import *
 
 if platform.system() == 'Darwin':
-    print enum_users()
+    enum_os()
     
