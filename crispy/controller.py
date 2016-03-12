@@ -1,8 +1,11 @@
 import socket
 import subprocess
 
-PORT = 443
-MAX_CONN = 5
+TCP_IP = '127.0.0.1'
+TCP_PORT = 8080
+MAX_CONN = 1
+BUFFER_SIZE = 1024
+PROMPT = "%s:%i>> " %(TCP_IP, TCP_PORT)
 BANNER = "      ___           ___                       ___           ___      \n \
     /  /\         /  /\        ___          /  /\         /  /\         ___    \n \
    /  /:/        /  /::\      /  /\        /  /:/_       /  /::\      /__/|    \n \
@@ -13,35 +16,44 @@ BANNER = "      ___           ___                       ___           ___      \
  \  \:\  /:/   \  \::/~~~~      \__\::/  \  \::/ /:/   \  \::/       ~\~~\:\   \n \
   \  \:\/:/     \  \:\          /__/:/    \__\/ /:/     \  \:\         \  \:\  \n \
    \  \::/       \  \:\         \__\/       /__/:/       \  \:\         \__\/  \n \
-    \__\/         \__\/                     \__\/         \__\/                "
+    \__\/         \__\/                     \__\/         \__\/                \n\n"
      
-def clear():
-    subprocess.call(["clear"])
-    
-def connect():
-    print "Connect"
-    
-def myreceive(self):
-    chunks = []
-    bytes_recd = 0
-    while bytes_recd < MSGLEN:
-        chunk = self.sock.recv(min(MSGLEN - bytes_recd, 2048))
-        if chunk == '':
-            raise RuntimeError("socket connection broken")
-        chunks.append(chunk)
-        bytes_recd = bytes_recd + len(chunk)
-    return ''.join(chunks)
 
-serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-serverSocket.bind((socket.gethostname(), PORT))
-serverSocket.listen(MAX_CONN)
-
-#clear()
-print(BANNER)
-while true:
-    (clientsocket, address) = serverSocket.accept()
-    print("Connection from: " + str(address))
-    commandToExecute = input(">> ")
+def help_menu():
+    info = "\nAvailable commands:\n"
+    info += "\tenum_os - get important info about the operating system\n"
+    info += "\tenum_interfaces - get a list of interfaces\n"
+    info += "\tenum_users - get a list of users\n"
+    info += "\tenum_applications - get a list of installed applications\n"
+    info += "\tenum_drives - get a list of drives\n"
+    info += "\tenum_printers - get a list of printers\n"
+    info += "\tenum_usb - get a list of USBs\n"
+    info += "\tget_reboot_history - get the system reboot history\n"
+    info += "\tget_process_list - get the system process list\n"
+    info += "\tget_ssh_keys - get any ssh keys\n"
+    return info
     
-    if commandToExecute == "help":
-        print "commands..."
+try:
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s.connect((TCP_IP, TCP_PORT))
+    print(BANNER)
+except socket.error, (value,message): 
+    if s: 
+        s.close() 
+    print "Could not connect to server: " + message 
+    sys.exit(1) 
+
+while True:
+    commandToExecute = raw_input(PROMPT).strip().lower()
+    
+    if commandToExecute == '-h' or commandToExecute == 'help':
+        print help_menu()
+    elif commandToExecute == 'exit' or commandToExecute == 'quit':
+        break
+    else:
+        s.send(commandToExecute)
+        data = s.recv(BUFFER_SIZE)
+        print data
+s.close()
+
+#write method to pass connection off to someone else??

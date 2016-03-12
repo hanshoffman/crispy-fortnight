@@ -4,76 +4,82 @@ import os
 import subprocess
 import socket
 import sys
-import array
-import struct
-import fcntl
 
 from os import listdir
 
 def enum_os():
-    print "[*] Operating System Info:"
-    print "\tComputer Name:", platform.node()
-    print "\tKernel Version:", platform.system(), platform.release()
-    print "\tSystem Date:", datetime.datetime.now()
-    #print "\tUptime:", subprocess.call(["uptime", "|", "cut", "-d\' \'", "-f2-5"])
-    print "\tProcessor Type:", platform.processor()
-    print "\tCPU Architecture:", platform.machine()
-    print "\tPATH:", os.getenv('PATH')
-    print "\tCurrent User:", os.getenv('USER')
-    print "\tHOME:", os.getenv('HOME')
-    print "\tSHELL:", os.getenv('SHELL')
-    print "\n"
+    info = "[*] Operating System Info:\n"
+    info += "\tComputer Name: %s\n" %platform.node()
+    info += "\tKernel Version: %s %s\n" %(platform.system(), platform.release())
+    info += "\tSystem Date: %s\n" %datetime.datetime.now()
+    info += "\tUptime: %s\n" %subprocess.call(["uptime"])
+    info += "\tProcessor Type: %s\n" %platform.processor()
+    info += "\tCPU Architecture: %s\n" %platform.machine()
+    info += "\tPATH: %s\n" %os.getenv('PATH')
+    info += "\tCurrent User %s\n" %os.getenv('USER')
+    info += "\tHOME: %s\n" %os.getenv('HOME')
+    info += "\tSHELL: %s\n\n" %os.getenv('SHELL')
+    return info
     
 def enum_interfaces():
-    print "[*] Network Interface[s]:"
+    info = "[*] Network Interface[s]:\n"
+    return info
     #getifaddrs
 
 def enum_users():
-    print "[*] Users:"
+    info = "[*] Users:\n"
+    return info
     #dscl . -ls /Users
     #http://superuser.com/questions/592921/mac-osx-users-vs-dscl-command-to-list-user/621055
     #create a hash set of ls /Users/ and dscl . -ls /Users leaving only unique users. then run commands
     #from link above on those users
 
 def enum_applications():
-    print "[*] Installed Applications:"
+    info = "[*] Installed Applications:\n"
     apps = listdir('/Applications')
     for app in apps:
         if app[0] == '.':
             continue
         else:
-            print "\t", app
-    print "\n"
+            info += "\t%s\n" %app
+  
+    return info
     
 def enum_drives():
-    print "[*] Disk Partitions:"
+    info = "[*] Disk Partitions:\n"
+    
     partitions = listdir('/Volumes')
     for disk in partitions:
-        print "\t", disk
-    print "\n"
+        info += "\t%s" %disk
+        
+    return info
     
 def enum_printers():
-    print "[*] Printers:"
+    info = "[*] Printers:\n"
+    
     printers = listdir('/private/etc/cups/ppd/')
     for printer in printers:
-        print "\t", printer[:-4]
-    print "\n"
+        info += "\t%s\n" %printer[:-4]
     #ls -al /Library/Printers
     #lpinfo -m
-
-def enum_reboot_history():
-    print "[*] Reboot History:"
-    subprocess.call(["last", "reboot"])
+    return info
 
 def enum_usb():
-    print "[*] USBs:"
+    info = "[*] USBs:\n"
+    return info
     #system_profiler SPUSBDataType
     #ioreg -p IOUSB -l -w 0 | grep "USB Product Name"
+    
+def get_reboot_history():
+    info = "[*] Reboot History:\n"
+    info += "%s\n" %subprocess.call(["last", "reboot"])
+    return info
 
 def get_process_list():
-    print "[*] Process List:"
-    subprocess.call(["ps", "aux"])
-    print "\n"
+    info = "[*] Process List:\n"
+    info += "%s\n" %subprocess.call(["ps", "aux"])
+    return info
     
 def get_ssh_keys():
-    print "[*] Searching for ssh keys:"
+    info = "[*] Searching for ssh keys:\n"
+    return info
