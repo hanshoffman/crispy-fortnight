@@ -64,6 +64,7 @@ while True:
         s.send(commandToExecute)
         data = s.recv(BUFFER_SIZE)
         print data
+        
 s.close()
 
 #write method to pass connection off to someone else??

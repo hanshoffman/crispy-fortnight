@@ -3,8 +3,7 @@ import socket
 import sys
 
 from os_types import macintosh
-from os_types import windows
-from os_types import common
+#from os_types.debian import Debian
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 8080
@@ -25,16 +24,15 @@ while True:
     conn, addr = s.accept()
     data = conn.recv(BUFFER_SIZE)
     
-    #use inheritance to remove lengthy if/else?
+    #use polymorphism to remove lengthy if/else?
     #https://jeffknupp.com/blog/2014/06/18/improve-your-python-python-classes-and-object-oriented-programming/
-    
+    #deb = Debian
+    #deb.lp()
+            
     if data == "enum_os":
         if platform.system() == 'Darwin':
             conn.send(macintosh.enum_os())
             #use encoder first, then send request
-        elif platform.system() == 'Windows':
-            print "needs to be implemented"
-            #conn.send(windows.enum_os())
         else:
             break
     elif data == "enum_printers":

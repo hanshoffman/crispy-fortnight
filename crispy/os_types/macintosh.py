@@ -1,33 +1,34 @@
-import platform
 import datetime
 import os
+import platform
 import subprocess
 import socket
 import sys
-
-from os import listdir
 
 def enum_os():
     info = "[*] Operating System Info:\n"
     info += "\tComputer Name: %s\n" %platform.node()
     info += "\tKernel Version: %s %s\n" %(platform.system(), platform.release())
     info += "\tSystem Date: %s\n" %datetime.datetime.now()
-    info += "\tUptime: %s\n" %subprocess.call(["uptime"])
+    info += "\tUptime: %s\n" %subprocess.call(['uptime'])
     info += "\tProcessor Type: %s\n" %platform.processor()
     info += "\tCPU Architecture: %s\n" %platform.machine()
     info += "\tPATH: %s\n" %os.getenv('PATH')
     info += "\tCurrent User %s\n" %os.getenv('USER')
     info += "\tHOME: %s\n" %os.getenv('HOME')
     info += "\tSHELL: %s\n\n" %os.getenv('SHELL')
+    
     return info
     
 def enum_interfaces():
     info = "[*] Network Interface[s]:\n"
+    
     return info
     #getifaddrs
 
 def enum_users():
     info = "[*] Users:\n"
+    
     return info
     #dscl . -ls /Users
     #http://superuser.com/questions/592921/mac-osx-users-vs-dscl-command-to-list-user/621055
@@ -36,7 +37,8 @@ def enum_users():
 
 def enum_applications():
     info = "[*] Installed Applications:\n"
-    apps = listdir('/Applications')
+
+    apps = os.listdir('/Applications')
     for app in apps:
         if app[0] == '.':
             continue
@@ -48,7 +50,7 @@ def enum_applications():
 def enum_drives():
     info = "[*] Disk Partitions:\n"
     
-    partitions = listdir('/Volumes')
+    partitions = os.listdir('/Volumes')
     for disk in partitions:
         info += "\t%s" %disk
         
@@ -57,7 +59,7 @@ def enum_drives():
 def enum_printers():
     info = "[*] Printers:\n"
     
-    printers = listdir('/private/etc/cups/ppd/')
+    printers = os.listdir('/private/etc/cups/ppd/')
     for printer in printers:
         info += "\t%s\n" %printer[:-4]
     #ls -al /Library/Printers
@@ -66,20 +68,24 @@ def enum_printers():
 
 def enum_usb():
     info = "[*] USBs:\n"
+    
     return info
     #system_profiler SPUSBDataType
     #ioreg -p IOUSB -l -w 0 | grep "USB Product Name"
     
 def get_reboot_history():
     info = "[*] Reboot History:\n"
-    info += "%s\n" %subprocess.call(["last", "reboot"])
+    info += "%s\n" %subprocess.call(['last', 'reboot'])
+    
     return info
 
 def get_process_list(): #should this be even included? or left to a shell instead?
     info = "[*] Process List:\n"
-    info += "%s\n" %subprocess.call(["ps", "aux"])
+    info += "%s\n" %subprocess.call(['ps', 'aux'])
+    
     return info
     
 def get_ssh_keys():
     info = "[*] Searching for ssh keys:\n"
+    
     return info
