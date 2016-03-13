@@ -20,18 +20,26 @@ BANNER = "      ___           ___                       ___           ___      \
      
 
 def help_menu():
-    info = "\nAvailable commands:\n"
-    info += "\tenum_os - get important info about the operating system\n"
-    info += "\tenum_interfaces - get a list of interfaces\n"
-    info += "\tenum_users - get a list of users\n"
-    info += "\tenum_applications - get a list of installed applications\n"
-    info += "\tenum_drives - get a list of drives\n"
-    info += "\tenum_printers - get a list of printers\n"
-    info += "\tenum_usb - get a list of USBs\n"
+    info = "\nRemote commands:\n"
+    info += "\tenum_os            - get operating system info\n"
+    info += "\tenum_interfaces    - get a list of interfaces\n"
+    info += "\tenum_users         - get a list of users\n"
+    info += "\tenum_applications  - get a list of installed applications\n"
+    info += "\tenum_drives        - get a list of drives\n"
+    info += "\tenum_printers      - get a list of printers\n"
+    info += "\tenum_usb           - get a list of USBs\n"
     info += "\tget_reboot_history - get the system reboot history\n"
-    info += "\tget_process_list - get the system process list\n"
-    info += "\tget_ssh_keys - get any ssh keys\n"
+    info += "\tget_process_list   - get the system process list\n"
+    info += "\tget_ssh_keys       - get any ssh keys\n"
+    info += "Local commands:\n"
+    info += "\tsession            - show current session\n"
+    info += "\texit               - close down connection to remote host\n"
     return info
+
+def get_session_info():
+    #show length of connection
+    #show remote ip and port connected to
+    return "need to implement once bind/reverse conn is figured out"
     
 try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -48,6 +56,8 @@ while True:
     
     if commandToExecute == '-h' or commandToExecute == 'help':
         print help_menu()
+    elif commandToExecute == 'session':
+        print get_session_info()
     elif commandToExecute == 'exit' or commandToExecute == 'quit':
         break
     else:

