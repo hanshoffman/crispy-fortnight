@@ -75,7 +75,7 @@ def get_reboot_history():
     info += "%s\n" %subprocess.call(["last", "reboot"])
     return info
 
-def get_process_list():
+def get_process_list(): #should this be even included? or left to a shell instead?
     info = "[*] Process List:\n"
     info += "%s\n" %subprocess.call(["ps", "aux"])
     return info

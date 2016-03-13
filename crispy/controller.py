@@ -37,7 +37,7 @@ try:
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((TCP_IP, TCP_PORT))
     print(BANNER)
-except socket.error, (value,message): 
+except socket.error, (value, message): 
     if s: 
         s.close() 
     print "Could not connect to server: " + message 
