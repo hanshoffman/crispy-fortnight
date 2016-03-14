@@ -34,6 +34,7 @@ def help_menu():
     info += "Local commands:\n"
     info += "\tsession            - show current session\n"
     info += "\texit               - close down connection to remote host\n"
+    
     return info
 
 def get_session_info():

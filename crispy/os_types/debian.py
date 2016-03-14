@@ -1,7 +1,7 @@
-#Ubuntu
-#https://docs.python.org/2/library/platform.html
-from os_types.base import OperatingSystem
+from crispy.os_types.base import Base
 
-class Debian(OperatingSystem):
-    def lp(self):
-        print "test"
+class Debian(Base):
+    '''Ubuntu'''
+    
+    def enum_os(self):
+        pass

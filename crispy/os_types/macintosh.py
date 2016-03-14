@@ -6,17 +6,22 @@ import subprocess
 def enum_os():
     info = "[*] Operating System Info:\n"
     info += "\tComputer Name: %s\n" %platform.node()
+    info += "\tModel: %s" %subprocess.check_output(['sysctl', 'hw.model'])[10:]
     info += "\tKernel Version: %s %s\n" %(platform.system(), platform.release())
     info += "\tSystem Date: %s\n" %datetime.datetime.now()
-    info += "\tUptime: %s\n" %subprocess.call(['uptime'])
+    info += "\tUptime: %s\n" %convert_uptime(subprocess.check_output(['uptime']))
     info += "\tProcessor Type: %s\n" %platform.processor()
     info += "\tCPU Architecture: %s\n" %platform.machine()
+    info += "\t# of CPU cores: %s" %subprocess.check_output(['sysctl', 'hw.ncpu'])[9:]
+    info += "\tCurrent User: %s\n" %os.getenv('USER')
     info += "\tPATH: %s\n" %os.getenv('PATH')
-    info += "\tCurrent User %s\n" %os.getenv('USER')
     info += "\tHOME: %s\n" %os.getenv('HOME')
-    info += "\tSHELL: %s\n\n" %os.getenv('SHELL')
+    info += "\tSHELL: %s\n" %os.getenv('SHELL')
     
     return info
+
+def convert_uptime(s):
+    return s[s.find('up')+3:s.find(',')]
     
 def enum_interfaces():
     info = "[*] Network Interface[s]:\n"
@@ -27,11 +32,12 @@ def enum_interfaces():
 def enum_users():
     info = "[*] Users:\n"
     
+    users = subprocess.check_output(['dscl', '.', '-ls', '/Users'])
+    for user in users:
+        if user[0] != '_':
+            info += "\t%s" %user
+    
     return info
-    #dscl . -ls /Users
-    #http://superuser.com/questions/592921/mac-osx-users-vs-dscl-command-to-list-user/621055
-    #create a hash set of ls /Users/ and dscl . -ls /Users leaving only unique users. then run commands
-    #from link above on those users
 
 def enum_applications():
     info = "[*] Installed Applications:\n"
@@ -60,8 +66,7 @@ def enum_printers():
     printers = os.listdir('/private/etc/cups/ppd/')
     for printer in printers:
         info += "\t%s\n" %printer[:-4]
-    #ls -al /Library/Printers
-    #lpinfo -m
+
     return info
 
 def enum_usb():
@@ -73,13 +78,13 @@ def enum_usb():
     
 def get_reboot_history():
     info = "[*] Reboot History:\n"
-    info += "%s\n" %subprocess.call(['last', 'reboot'])
+    info += "%s" %subprocess.check_output(['last', 'reboot'])
     
     return info
 
 def get_process_list(): #should this be even included? or left to a shell instead?
     info = "[*] Process List:\n"
-    info += "%s\n" %subprocess.call(['ps', 'aux'])
+    info += "%s" %subprocess.check_output(['ps', 'aux'])
     
     return info
     
