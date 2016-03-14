@@ -2,8 +2,6 @@ import datetime
 import os
 import platform
 import subprocess
-import socket
-import sys
 
 def enum_os():
     info = "[*] Operating System Info:\n"
