@@ -68,10 +68,11 @@ class Mac(Base):
         
     def get_ssh_keys(self):
         info = "[*] Searching for ssh keys:\n"
+        ignoredFolders = ['Guest', 'Shared']
         
         users = os.listdir('/Users')
         for user in users:
-            if user[0] == '.' or user == 'Guest' or user == 'Shared':
+            if user[0] == '.' or user in ignoredFolders:
                 continue
             else:
                 userPath = '/Users/' + user + '/.ssh'
