@@ -11,14 +11,14 @@ class Mac(Base):
     def enum_os(self):
         info = "[*] Operating System Info:\n"
         info += "\tComputer Name: {0}\n".format(platform.node())
-        info += "\tModel: {0}\n".format(subprocess.check_output(['sysctl', 'hw.model'])[10:])
+        info += "\tModel: {0}".format(subprocess.check_output(['sysctl', 'hw.model'])[10:])
         info += "\tKernel Version: {0} {1}\n".format(platform.system(), platform.release())
         info += "\tSystem Date: {0}\n".format(datetime.datetime.now())
-        #info += "\tUptime: {0}\n".format(subprocess.check_output(['uptime'][_.find('up')+3:_.find(',')]))
-        info += "\tUptime: {0}\n".format(subprocess.check_output(['uptime']))
+        #info += "\tUptime: {0}\n".format(subprocess.check_output(['uptime'])[_.find('up')+3:_.find(',')])
+        info += "\tUptime: {0}".format(subprocess.check_output(['uptime']))
         info += "\tProcessor Type: {0}\n".format(platform.processor())
         info += "\tCPU Architecture: {0}\n".format(platform.machine())
-        info += "\t# of CPU cores: {0}\n".format(subprocess.check_output(['sysctl', 'hw.ncpu'])[9:])
+        info += "\t# of CPU cores: {0}".format(subprocess.check_output(['sysctl', 'hw.ncpu'])[9:])
         info += "\tCurrent User: {0}\n".format(os.getenv('USER'))
         info += "\tPATH: {0}\n".format(os.getenv('PATH'))
         info += "\tHOME: {0}\n".format(os.getenv('HOME'))
@@ -55,7 +55,7 @@ class Mac(Base):
         for disk in partitions:
             info += "\t%s" %disk
             
-        return info
+        return info + "\n"
         
     def enum_printers(self):
         info = "[*] Printers:\n"

