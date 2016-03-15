@@ -1,6 +1,7 @@
 import datetime
 import os
 import platform
+import re
 import subprocess
 
 from crispy.os_types.base import Base
@@ -14,8 +15,7 @@ class Mac(Base):
         info += "\tModel: {0}".format(subprocess.check_output(['sysctl', 'hw.model'])[10:])
         info += "\tKernel Version: {0} {1}\n".format(platform.system(), platform.release())
         info += "\tSystem Date: {0}\n".format(datetime.datetime.now())
-        #info += "\tUptime: {0}\n".format(subprocess.check_output(['uptime'])[_.find('up')+3:_.find(',')])
-        info += "\tUptime: {0}".format(subprocess.check_output(['uptime']))
+        info += "\tUptime: {0} day(s)\n".format(re.findall(r'up ([\d]+)', subprocess.check_output(['uptime']))[0])
         info += "\tProcessor Type: {0}\n".format(platform.processor())
         info += "\tCPU Architecture: {0}\n".format(platform.machine())
         info += "\t# of CPU cores: {0}".format(subprocess.check_output(['sysctl', 'hw.ncpu'])[9:])
