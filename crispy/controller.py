@@ -1,8 +1,9 @@
 import socket
+import sys
 
 BUFFER_SIZE = 1024
 TCP_IP, TCP_PORT = "localhost", 8080
-PROMPT = "%s:%i>> " %(TCP_IP, TCP_PORT)
+PROMPT = "%s:%i>> " % (TCP_IP, TCP_PORT)
 BANNER = "      ___           ___                       ___           ___      \n \
     /  /\         /  /\        ___          /  /\         /  /\         ___    \n \
    /  /:/        /  /::\      /  /\        /  /:/_       /  /::\      /__/|    \n \
@@ -33,8 +34,8 @@ def help_menu():
     return info
  
 def get_session_info():
-    #show length of connection
-    #show remote ip and port connected to
+    # show length of connection
+    # show remote ip and port connected to
     return "need to implement once bind/reverse conn is figured out"
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -53,12 +54,14 @@ try:
             print get_session_info()
             pass
         elif commandToExecute == 'exit' or commandToExecute == 'quit':
+            sock.shutdown('SHUT_WR')
+            sock.close()
             break
         else:
             sock.sendall(commandToExecute + "\n")
             data = sock.recv(BUFFER_SIZE)
             print data
-         
-    sock.close()
 except:
     print "Couldn't connect to " + TCP_IP
+finally:
+    sys.exit(0)
