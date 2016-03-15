@@ -69,4 +69,18 @@ class Mac(Base):
     def get_ssh_keys(self):
         info = "[*] Searching for ssh keys:\n"
         
+        users = os.listdir('/Users')
+        for user in users:
+            if user[0] == '.' or user == 'Guest' or user == 'Shared':
+                continue
+            else:
+                userPath = '/Users/' + user + '/.ssh'
+                
+                if os.path.isdir(userPath):
+                    info += "[+] Found - " + userPath + ":\n"
+                    
+                files = os.listdir(userPath) 
+                for f in files:
+                    info += "\t" + f + "\n"
+        
         return info
