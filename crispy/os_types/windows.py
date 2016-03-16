@@ -1,3 +1,5 @@
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))
+
 from crispy.os_types.base import Base
 
 class Windows(Base):

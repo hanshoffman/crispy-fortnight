@@ -2,6 +2,8 @@ import platform
 import SocketServer
 import sys
 
+sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))
+
 from crispy.os_types.macintosh import Mac
 from crispy.encoders.mime import Mime
 
