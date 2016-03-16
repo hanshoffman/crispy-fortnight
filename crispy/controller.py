@@ -19,15 +19,19 @@ BANNER = "      ___           ___                       ___           ___      \
     \__\/         \__\/                     \__\/         \__\/                \n\n"
     
 def help_menu():
-    info = "\nRemote commands:\n"
-    info += "\tenum_os            - get operating system info\n"
-    info += "\tenum_applications  - get a list of installed applications\n"
-    info += "\tenum_drives        - get a list of drives\n"
-    info += "\tenum_printers      - get a list of printers\n"
-    info += "\tget_ssh_keys       - get any ssh keys\n"
-    info += "Local commands:\n"
-    info += "\tsession            - show current session\n"
-    info += "\texit               - close down connection to remote host\n"
+    info = """
+    Remote commands:
+        enum_os            - get operating system info
+        enum_applications  - get a list of installed applications
+        enum_drives        - get a list of drives
+        enum_printers      - get a list of printers
+        get_ssh_keys       - get any ssh keys
+        download           - download [src file] [dest path]
+        upload             - upload [src file] [dest path]
+    Local commands:
+        session            - show current session
+        exit               - close down connection to remote host
+    """
      
     return info
  
