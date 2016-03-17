@@ -8,7 +8,7 @@ from crispy.os_types.base import Base
 
 class Mac(Base):
     '''Mac OSX'''
-    
+ 
     def enum_os(self):
         info = "[*] Operating System Info:\n"
         info += "\tComputer Name: {0}\n".format(platform.node())
@@ -85,3 +85,6 @@ class Mac(Base):
                     info += "\t" + f + "\n"
         
         return info
+    
+    def enable_persistence(self):
+        pass
