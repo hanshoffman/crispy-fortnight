@@ -29,10 +29,6 @@ class Base(object):
     def get_ssh_keys(self):
         pass
     
-    def upload(self, socket):
-        return "working on it"
-    
-    def download(self, socket):
-        return "working on it"
-    
-    ##http://www.bogotobogo.com/python/python_network_programming_server_client_file_transfer.php
+    @abstractmethod
+    def enable_persistence(self):
+        pass
