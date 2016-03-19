@@ -1,0 +1,3 @@
+-get packaging set up properly so I run code from command line
+-get upload/download functionality added
+-
