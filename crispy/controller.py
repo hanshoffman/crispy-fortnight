@@ -4,8 +4,8 @@ import socket
 import sys
 
 class CrispyController:  
-    def __init__(self, ip, port, cipher):
-        self.ip = ip
+    def __init__(self, host, port, cipher):
+        self.host = host
         self.port = port
         self.cipher = cipher
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,11 +31,11 @@ class CrispyController:
         from constants import BANNER, BUFFER_SIZE
         
         try:
-            self.sock.connect((self.ip, self.port))
+            self.sock.connect((self.host, self.port))
             print BANNER
             
             while True:
-                cmd = raw_input("%s:%i>> " % (self.ip, self.port)).strip()
+                cmd = raw_input("%s:%i>> " % (self.host, self.port)).strip()
                  
                 if cmd == '-h' or cmd == 'help':
                     print self.help_menu()

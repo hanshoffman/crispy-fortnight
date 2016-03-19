@@ -1,3 +1,4 @@
+-get client/server communication up and running again
 -set up logging on client side for debugging
 	-https://pymotw.com/2/SocketServer/
 -get upload/download functionality added
