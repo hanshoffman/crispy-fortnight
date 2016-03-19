@@ -3,9 +3,9 @@ import platform
 import SocketServer
 import sys
 
-from .os_types.macintosh import Mac
-from .os_types.windows import Windows
-#from .encoders.mime import Mime
+from os_types.macintosh import Mac
+from os_types.windows import Windows
+from encoders.mime import Mime
     
 class ImplantHandler(SocketServer.BaseRequestHandler):
     def handle(self):

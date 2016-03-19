@@ -51,7 +51,7 @@ class CrispyController:
                     print data
         except Exception as e:
             print e
-            print "Couldn't connect to {0} on port {1}".format(self.ip, self.port)
+            print "[!] Couldn't connect to {0} on port {1}".format(self.ip, self.port)
         finally:
             sys.exit(0)
   
