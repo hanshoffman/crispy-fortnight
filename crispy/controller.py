@@ -42,6 +42,7 @@ class CrispyController:
                 elif cmd == 'session':
                     pass
                 elif cmd == 'exit' or cmd == 'quit':
+                    self.sock.sendall(self.cipher.encode(cmd + "\n"))
                     self.sock.close()
                     sys.exit(0)
                 else:

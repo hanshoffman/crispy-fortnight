@@ -5,9 +5,10 @@ from implantHandler import ImplantHandler
 
 class ImplantServer(SocketServer.TCPServer):
     def __init__(self, server_address, handler_class=ImplantHandler):
-        self.logger = logging.getLogger('EchoServer')
+        self.logger = logging.getLogger('ImplantServer')
         self.logger.debug('__init__')
-        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        self.allow_reuse_address = True
+        SocketServer.TCPServer.__init__(self, server_address, handler_class)    
         return
 
     def server_activate(self):

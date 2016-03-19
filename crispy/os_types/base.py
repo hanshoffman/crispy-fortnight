@@ -32,3 +32,9 @@ class Base(object):
     @abstractmethod
     def enable_persistence(self):
         pass
+    
+    def upgrade(self): #install newer version of implant
+        pass
+    
+    def burn(self): #completely remove implant
+        pass

