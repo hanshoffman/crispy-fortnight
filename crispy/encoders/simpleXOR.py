@@ -1,32 +1,23 @@
-import random
-import string
+# Credits to: https://dustri.org/b/elegant-xor-encryption-in-python.html
+
+from itertools import izip, cycle
 
 class SimpleXOR:
     '''Simple XOR encoding/decoding'''
     
-    def __init__(self):
-        self.key = self.generate_key(self, 11)
-    
-    def generate_key(self, length):
-        key = ''
+    def __init__(self, key):
+        if key == '':
+            self.key = "C415Py-f04Tn1GhT"
+        else:
+            self.key = key
 
-        for _ in range(length):
-            key.join(random.choice(string.lowercase))
-        
-        return key
+    def xor_ascii(self, msg): #this may fail on binary files            
+        return ''.join(chr(ord(i) ^ ord(j)) for i,j in izip(msg, cycle(self.key)))
     
-    def encode(self, plaintext):
-        ciphertext = ''
-        
-        for i,j in zip(plaintext, self.key):
-            ciphertext.join(chr(ord(i) ^ ord(j)))
+    def xor_binary(self, inFile): #embed key to decrypt in the file header, then remove it on other side
+        with open(inFile, 'wb') as f:
+            while True:
+                f.read_binary(1)
+            #return binary string representing file? don't want to save file on either machine
             
-        return ciphertext
-    
-    def decode(self, data):
-        plaintext = ''
-        
-        for i,j in zip(plaintext, self.key):
-            plaintext.join(chr(ord(i) ^ ord(j)))
-            
-        return plaintext
+            #https://samsclass.info/124/proj14/p13-xor.htm
