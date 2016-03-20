@@ -2,6 +2,10 @@
 -set up code to work with "modules"
 -set up tab completion
 	-https://docs.python.org/2/tutorial/interactive.html
+-add reverse connection instead of just bind
+-add controller functionality to keep control of ALL sessions connected to it
+	-be able to switch between sessions
+-add shell functionality
 -add upgrade functionality
 -add burn functionality
 
