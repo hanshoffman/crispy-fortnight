@@ -3,6 +3,7 @@ import socket
 import sys
 
 from constants import BANNER, BUFFER_SIZE, EOF_STR
+import subprocess
 
 class CrispyController:  
     def __init__(self, host, port, cipher):
@@ -23,6 +24,7 @@ class CrispyController:
             upload             - upload [src absolute path] [dest absolute path]
             enable_persistence - make py persistent through reboots
         Local commands:
+            pwd                - print current working directory
             session            - show info about current session
             exit               - close down connection to remote host
         """
@@ -79,6 +81,8 @@ class CrispyController:
                     print self.help_menu()
                 elif cmd == 'session':
                     pass
+                elif cmd == 'pwd':
+                    print "{0}\n".format(os.getcwd())
                 elif cmd.startswith('download'):
                     saveMeFile = cmd[9:].split(' ')[1]
                     print "[+] Downloading " + cmd[9:].split(' ')[0] + "..."
