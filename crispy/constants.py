@@ -1,4 +1,4 @@
-from crispy.encoders.mime import Mime
+from crispy.crypto.mime import Mime
 from crispy.os_types.macintosh import Mac
 
 BANNER = "                                                                     \n \

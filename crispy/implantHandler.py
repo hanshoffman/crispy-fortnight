@@ -3,7 +3,7 @@ import os
 import platform
 import SocketServer
 
-from encoders.mime import Mime
+from crypto.mime import Mime
 from constants import BUFFER_SIZE, PLATFORMS, EOF_STR
 
 logging.basicConfig(level=logging.DEBUG, format='%(name)s: %(message)s')
