@@ -1,4 +1,8 @@
 -add AES-256
+-add screenshot?
+	-see how metasploit does it for Mac
+	-https://github.com/ponty/pyscreenshot/blob/master/pyscreenshot/plugins/mac_screencapture.py (mac)
+	-https://www.youtube.com/watch?v=og9-X4xIxoQ (windows)
 -set up code to work with "modules"
 -set up tab completion
 	-https://docs.python.org/2/tutorial/interactive.html

