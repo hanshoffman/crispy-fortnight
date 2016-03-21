@@ -1,6 +1,6 @@
 import unittest
 
-from crispy.encoders.mime import Mime
+from crispy.crypto.mime import Mime
 
 class MimeTestCases(unittest.TestCase):
     @classmethod
