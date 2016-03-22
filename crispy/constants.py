@@ -1,5 +1,7 @@
 from crispy.crypto.mime import Mime
 from crispy.os_types.macintosh import Mac
+from crispy.os_types.windows import Windows
+from crispy.os_types.debian import Debian
 
 BANNER = "                                                                     \n \
      ___           ___                       ___           ___                 \n \
@@ -22,5 +24,7 @@ CIPHER = Mime()
 EOF_STR = "EOF!EOF!"
 
 PLATFORMS = {
-             'Darwin' : Mac()
+             'Darwin' : Mac(),
+             'Windows': Windows(),
+             'Linux'  : Debian()
              }
