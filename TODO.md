@@ -1,4 +1,3 @@
--add AES-256
 -add screenshot?
 	-see how metasploit does it for Mac
 	-https://github.com/ponty/pyscreenshot/blob/master/pyscreenshot/plugins/mac_screencapture.py (mac)
@@ -23,3 +22,4 @@ Done:
 -set up logging on server for debugging
 	-https://pymotw.com/2/SocketServer/
 -get upload/download functionality added
+-add AES-256
