@@ -26,22 +26,6 @@ def main():
     host = config.get('NETWORK', 'host')
     port = config.getint('NETWORK', 'port')
 
-    #logger = logging.getLogger('crispy_srv')
-    #logger.setLevel(config.getint('LOGS', 'logLvl'))
-    
-    #fh = logging.FileHandler('crispy.log')
-    #fh.setLevel(config.getint('LOGS', 'logLvl'))
-    
-    #console = logging.StreamHandler()
-    #console.setLevel(logging.ERROR)
-    
-    #formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    #fh.setFormatter(formatter)
-    #console.setFormatter(formatter)
-        
-    #logger.addHandler(fh)
-    #logger.addHandler(console)
-
     logging.basicConfig(filename='crispy.log', level=logging.DEBUG)
     
     try:
