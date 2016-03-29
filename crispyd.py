@@ -12,45 +12,46 @@ def main():
     argp.add_argument("--config",
                         dest="config_file",
                         help="Path to crispy config file",
-                        metavar="CONFIG_FILE",
+                        metavar="<config_file>",
                         required=True,
                         type=str)
-    parser.add_argument('--loglevel',
-			help="Change log verbosity",
+    argp.add_argument("--loglvl",
 			choices=["DEBUG", "ERROR", "INFO", "WARNING"],
-			default="WARNING")
+			default="WARNING",
 			dest="loglevel",
-    argp.add_argument('--version', 
-                        action='version', 
-                        version='1.0')
+			help="Change log verbosity",
+			type=str)
+    argp.add_argument("--version", 
+                        action="version", 
+                        version="1.0")
     args = argp.parse_args()
-    
-    if args.loglevel=="ERROR":
-	loglevel=logging.ERROR
-    elif args.loglevel=="DEBUG":
-	loglevel=logging.DEBUG
-    elif args.loglevel=="INFO":
-	loglevel=logging.INFO
-    else:
-	loglevel=logging.WARNING
 
-    logging.basicConfig(format='%(asctime)-15s - %(levelname)-5s - %(message)s')
-    logging.getLogger().setLevel(loglevel)
+    if args.loglevel == "DEBUG":
+	loglevel = logging.DEBUG
+    elif args.loglevel == "ERROR":
+	loglevel = logging.ERROR
+    elif args.loglevel == "INFO":
+	loglevel = logging.INFO
+    else:
+	loglevel = logging.WARNING
+    
+    logging.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
+			filename='crispy.log',
+			format='%(asctime)-15s - %(levelname)-5s - %(message)s',
+			level=loglevel)
 
     config = ConfigParser.ConfigParser()
     config.read(args.config_file)
     
-    host = config.get('NETWORK', 'host')
-    port = config.getint('NETWORK', 'port')
+    host = config.get('DAEMON', 'host')
+    port = config.getint('DAEMON', 'port')
 
-    logging.basicConfig(filename='crispy.log', level=logging.DEBUG)
-    
     try:
         server = CrispyTCPServer((host, port), CrispyTCPServerHandler)
-        logging.debug("Started server on {0}:{1}".format(server.server_address[0], server.server_address[1]))
+        logging.info("Started server on {0}:{1}".format(server.server_address[0], server.server_address[1]))
         server.serve_forever()
     except KeyboardInterrupt:
-        logging.debug("Shutting down server")
+        logging.info("Shutting down server")
         logging.shutdown()
         server.shutdown()
         server.socket.close()
