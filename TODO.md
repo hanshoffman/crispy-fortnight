@@ -1,14 +1,10 @@
+-set up code to work with "modules"
 -add screenshot?
 	-see how metasploit does it for Mac
 	-https://github.com/ponty/pyscreenshot/blob/master/pyscreenshot/plugins/mac_screencapture.py (mac)
 	-https://www.youtube.com/watch?v=og9-X4xIxoQ (windows)
--set up code to work with "modules"
 -set up tab completion
 	-https://docs.python.org/2/tutorial/interactive.html
--add reverse connection instead of just bind
-	-https://www.youtube.com/watch?v=4_ZdV4noOZw
-	-http://null-byte.wonderhowto.com/how-to/reverse-shell-using-python-0163875/
-	-https://haiderm.com/simple-python-fully-undetectable-fud-reverse-shell-backdoor/
 -add controller functionality to keep control of ALL sessions connected to it
 	-be able to switch between sessions
 -add shell functionality
@@ -23,3 +19,4 @@ Done:
 	-https://pymotw.com/2/SocketServer/
 -get upload/download functionality added
 -add AES-256
+-add reverse connection instead of just bind
