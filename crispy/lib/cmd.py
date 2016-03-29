@@ -1,3 +1,6 @@
+import argparse
+import cmd
+
 BANNER = "                                                                     \n \
      ___           ___                       ___           ___                 \n \
     /  /\         /  /\        ___          /  /\         /  /\         ___    \n \
@@ -9,4 +12,11 @@ BANNER = "                                                                     \
  \  \:\  /:/   \  \::/~~~~      \__\::/  \  \::/ /:/   \  \::/       ~\~~\:\   \n \
   \  \:\/:/     \  \:\          /__/:/    \__\/ /:/     \  \:\         \  \:\  \n \
    \  \::/       \  \:\         \__\/       /__/:/       \  \:\         \__\/  \n \
-    \__\/         \__\/                     \__\/         \__\/                \n"
+    \__\/         \__\/                     \__\/         \__\/                \n \
+								Version 1.0    "
+
+class CrispyCmd(cmd.Cmd):
+    def __init__(self, srv, config_file='crispy.conf'):
+	cmd.Cmd.__init__(self)
+	self.srv = srv
+	self.config
