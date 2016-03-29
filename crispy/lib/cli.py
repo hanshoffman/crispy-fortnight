@@ -19,7 +19,7 @@ BANNER = "                                                                     \
     \__\/         \__\/                     \__\/         \__\/                \n \
 								Version 1.0    "
 
-class CrispyConsole(cmd.Cmd):
+class CrispyCLI(cmd.Cmd):
     """ Available commands on crispy server. """
 
     def __init__(self, srv, config_file="crispy.conf"):
@@ -30,7 +30,7 @@ class CrispyConsole(cmd.Cmd):
 	    self.intro = BANNER
 	else:
 	    self.intro = ""
-	self.prompt=">> "
+	self.prompt="{0}:{1}>> ".format(srv.server_address[0], srv.server_address[1])
 	self.srv = srv
 
     def cmdloop(self, intro=None):	
