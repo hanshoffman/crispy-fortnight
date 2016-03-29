@@ -4,6 +4,7 @@ import ConfigParser
 
 from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
+from crispy.lib.console import CrispyConsole
     
 def main():
     argp = argparse.ArgumentParser(description="Crispy-fortnight (Python RAT) daemon console.",
@@ -37,7 +38,7 @@ def main():
     
     logging.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
 			filename='crispy.log',
-			format='%(asctime)-15s - %(levelname)-5s - %(message)s',
+			format='%(asctime)-15s - %(levelname)-5s - %(module)-3s - %(message)s',
 			level=loglevel)
 
     config = ConfigParser.ConfigParser()
@@ -46,15 +47,20 @@ def main():
     host = config.get('DAEMON', 'host')
     port = config.getint('DAEMON', 'port')
 
-    try:
-        server = CrispyTCPServer((host, port), CrispyTCPServerHandler)
-        logging.info("Started server on {0}:{1}".format(server.server_address[0], server.server_address[1]))
-        server.serve_forever()
-    except KeyboardInterrupt:
-        logging.info("Shutting down server")
-        logging.shutdown()
-        server.shutdown()
-        server.socket.close()
- 
+    srv = CrispyTCPServer((host, port), CrispyTCPServerHandler)
+    logging.info("Started server on {0}:{1}".format(srv.server_address[0], srv.server_address[1]))
+
+    console = CrispyConsole(srv)
+
+    while True:
+	try:
+	    console.cmdloop()
+	except Exception as e:
+	    logging.info("Server shutting down")
+	    logging.shutdown()
+	    srv.shutdown()
+	    srv.socket.close()
+	    exit()
+
 if __name__ == "__main__":
     main()
