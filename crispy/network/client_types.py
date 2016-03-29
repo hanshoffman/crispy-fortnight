@@ -5,14 +5,14 @@ from abc import abstractmethod
 class CrispyClientType(object):        
     @abstractmethod
     def connect(self, host, port):
-        """return a socket after a connection has occurred"""
+        """Return a socket after a connection has occurred."""
         pass
 
 class CrispyTCPClient(CrispyClientType):
     def __init__(self):
-        self.sock = None
         self.family = socket.AF_INET
         self.protocol = socket.IPPROTO_TCP
+        self.sock = None
         self.sock_type = socket.SOCK_STREAM
     
     def connect(self, host, port):
