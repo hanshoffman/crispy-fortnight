@@ -3,6 +3,8 @@ import cmd
 import ConfigParser
 import logging
 
+#from crispyd import __version__ #import error every time!
+
 logger = logging.getLogger(__name__)
 
 BANNER = "                                                                     \n \
@@ -16,8 +18,8 @@ BANNER = "                                                                     \
  \  \:\  /:/   \  \::/~~~~      \__\::/  \  \::/ /:/   \  \::/       ~\~~\:\   \n \
   \  \:\/:/     \  \:\          /__/:/    \__\/ /:/     \  \:\         \  \:\  \n \
    \  \::/       \  \:\         \__\/       /__/:/       \  \:\         \__\/  \n \
-    \__\/         \__\/                     \__\/         \__\/                \n \
-								Version 1.0    "
+    \__\/         \__\/                     \__\/         \__\/                \n"
+#								 "%(__version__)
 
 class CrispyCLI(cmd.Cmd):
     """ Available commands on crispy server. """
@@ -37,9 +39,8 @@ class CrispyCLI(cmd.Cmd):
 	try:
 	    cmd.Cmd.cmdloop(self, intro)
 	except KeyboardInterrupt as e:
-	    do_exit
-	    #self.stdout.write('\n')
-	    #self.cmdloop(intro="")
+	    self.stdout.write('\n')
+	    self.cmdloop(intro="")
 
     def do_exit(self, args):
 	""" Quit Crispy shell. """
@@ -53,6 +54,10 @@ class CrispyCLI(cmd.Cmd):
 
     def emptyline(self):
 	""" Do nothing when an emptyline is entered. """
+	pass
+
+    def do_list_modules(self, args):
+	""" List available modules. """
 	pass
 
     def do_sessions(self, args):

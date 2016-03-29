@@ -6,6 +6,8 @@ from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
 from crispy.lib.cli import CrispyCLI
     
+__version__ = 'v1.0.0'
+
 def main():
     argp = argparse.ArgumentParser(description="Crispy-fortnight (Python RAT) daemon console.",
                                    epilog="Do NOT use this for nefarious purposes!", 
@@ -23,9 +25,12 @@ def main():
 			help="Change log verbosity",
 			type=str)
     argp.add_argument("--version", 
-                        action="version", 
-                        version="1.0")
+                        action="store_true", 
+                        help="Print version and exit")
     args = argp.parse_args()
+
+    if args.version: 
+	print "{}".format(__version__)
 
     if args.loglevel == "DEBUG":
 	loglevel = logging.DEBUG
