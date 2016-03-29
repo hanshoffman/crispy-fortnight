@@ -6,8 +6,6 @@ from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
 from crispy.lib.cli import CrispyCLI
     
-__version__ = 'v1.0.0'
-
 def main():
     argp = argparse.ArgumentParser(description="Crispy-fortnight (Python RAT) daemon console.",
                                    epilog="Do NOT use this for nefarious purposes!", 
@@ -55,17 +53,10 @@ def main():
     srv = CrispyTCPServer((host, port), CrispyTCPServerHandler)
     logging.info("Started server on {0}:{1}".format(srv.server_address[0], srv.server_address[1]))
 
-    cli = CrispyCLI(srv)
-
-    while True:
-	try:
-	    cli.cmdloop()
-	except Exception as e:
-	    logging.info("Server shutting down")
-	    logging.shutdown()
-	    srv.shutdown()
-	    srv.socket.close()
-	    exit()
+    try:
+	CrispyCLI(srv).cmdloop()
+    except KeyboardInterrupt:
+	logging.info("Ctrl-C received... shutting down crispyd")
 
 if __name__ == "__main__":
     main()

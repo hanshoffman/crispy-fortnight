@@ -1,9 +1,11 @@
 import argparse
 import cmd
 import ConfigParser
+import getpass
 import logging
+import sys
 
-#from crispyd import __version__ #import error every time!
+from crispy import __version__
 
 logger = logging.getLogger(__name__)
 
@@ -18,11 +20,11 @@ BANNER = "                                                                     \
  \  \:\  /:/   \  \::/~~~~      \__\::/  \  \::/ /:/   \  \::/       ~\~~\:\   \n \
   \  \:\/:/     \  \:\          /__/:/    \__\/ /:/     \  \:\         \  \:\  \n \
    \  \::/       \  \:\         \__\/       /__/:/       \  \:\         \__\/  \n \
-    \__\/         \__\/                     \__\/         \__\/                \n"
-#								 "%(__version__)
+    \__\/         \__\/                     \__\/         \__\/                \n \
+								       %s" %(__version__)
 
 class CrispyCLI(cmd.Cmd):
-    """ Available commands on crispy server. """
+    """ Available commands for crispy cli. """
 
     def __init__(self, srv, config_file="crispy.conf"):
 	cmd.Cmd.__init__(self)
@@ -32,20 +34,14 @@ class CrispyCLI(cmd.Cmd):
 	    self.intro = BANNER
 	else:
 	    self.intro = ""
-	self.prompt="{0}:{1}>> ".format(srv.server_address[0], srv.server_address[1])
+	self.prompt="{0}@crispy>> ".format(getpass.getuser())
 	self.srv = srv
 
-    def cmdloop(self, intro=None):	
-	try:
-	    cmd.Cmd.cmdloop(self, intro)
-	except KeyboardInterrupt as e:
-	    self.stdout.write('\n')
-	    self.cmdloop(intro="")
-
-    def do_exit(self, args):
-	""" Quit Crispy shell. """
-	logger.debug("do_exit() was called")
-	sys.exit()
+    def do_EOF(self, args):
+	""" Use Ctrl-D (i.e. EOF) to exit. """
+        logger.debug("Ctrl-D received... shutting down crispyd")
+	print ""
+        sys.exit()
 
     def do_help(self, args):
 	""" Help menu. """
@@ -56,7 +52,7 @@ class CrispyCLI(cmd.Cmd):
 	""" Do nothing when an emptyline is entered. """
 	pass
 
-    def do_list_modules(self, args):
+    def do_modules(self, args):
 	""" List available modules. """
 	pass
 
