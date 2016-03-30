@@ -10,5 +10,4 @@ class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
     
     def handle(self):
 	logger.debug("BaseRequestHandler: connection from {}".format(self.client_address))
-	self.request.sendall("I am your master")
         return

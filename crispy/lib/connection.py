@@ -35,7 +35,7 @@ class CrispyConnection(object):
     
     def is_linux(self):
         """ Determine if platform connected is an Linux system. """
-        logger.debug("is_linux was called")
+        logger.debug("is_linux() was called")
 	if "Linux" in self.desc["platform"]:
             return True
         else:
@@ -51,6 +51,7 @@ class CrispyConnection(object):
 
     def is_unix(self):
 	""" Determine if platform connected is a *nix system. """
+	logger.debug("is_unix() was called")
 	return not self.is_windows()
     
     def is_proc_arch_64_bits(self):

@@ -1,6 +1,8 @@
 import StringIO
 
 class CrispyModule(object):
+    """ Module object that all other modules will inherit from. """
+    
     compatible_systems = []
     category = "general"
 
@@ -10,11 +12,11 @@ class CrispyModule(object):
 	self.stdout = StringIO.StringIO()
 
     def init_argparse(self):
-	"""Override this method to define your own arguments."""
+	""" Override this method to define your own arguments. """
 	pass
 
     def is_compatible(self):
-	"""Override this method to define if module is compatible with the given client."""
+	""" Override this method to define if module is compatible with the given client. """
 	if "all" in self.compatible_systems:
 	    return (True, "")
 	elif "windows" in self.compatible_systems and self.client.is_windows():
