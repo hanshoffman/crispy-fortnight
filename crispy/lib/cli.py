@@ -35,6 +35,7 @@ class CrispyCLI(cmd.Cmd):
 	else:
 	    self.intro = ""
 	self.prompt="{0}@crispy>> ".format(getpass.getuser())
+	self.doc_header = "Available commands:"
 	self.srv = srv
 
     def do_EOF(self, args):
