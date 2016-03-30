@@ -17,10 +17,6 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
         return
     
-    def setup(self):
-        self.logger.debug('setup')
-        return SocketServer.BaseRequestHandler.setup(self)
-    
     def handle(self):
         self.logger.debug('handle')
         
@@ -88,7 +84,3 @@ class ImplantHandler(SocketServer.BaseRequestHandler):
                 self.logger.debug(e)
                 break
         return
-    
-    def finish(self):
-        self.logger.debug('finish')
-        return SocketServer.BaseRequestHandler.finish(self)                          
