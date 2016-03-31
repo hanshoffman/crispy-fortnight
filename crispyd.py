@@ -53,8 +53,10 @@ def main():
 
     try:
 	CrispyCLI(srv).cmdloop()
+        #srv.serve_forever()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
+	srv.shutdown()
 
 if __name__ == "__main__":
     main()
