@@ -1,6 +1,7 @@
 import argparse
 import logging
 import ConfigParser
+import thread
 
 from crispy.network.server_handler import CrispyTCPServerHandler
 from crispy.lib.server import CrispyTCPServer
@@ -52,8 +53,8 @@ def main():
     logging.info("Started server on {0}:{1}".format(srv.server_address[0], srv.server_address[1]))
 
     try:
-	CrispyCLI(srv).cmdloop()
-        #srv.serve_forever()
+	thread.start_new_thread(CrispyCLI(srv).cmdloop, ())
+        srv.serve_forever()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
 	srv.shutdown()

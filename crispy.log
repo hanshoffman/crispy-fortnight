@@ -23,3 +23,9 @@
 2016-03-27 23:31:23,180 - crispy_srv - INFO - Started server on 127.0.0.1:8080
 2016-03-27 23:32:01,083 - crispy_srv - INFO - Started server on 127.0.0.1:8080
 2016-03-27 23:32:06,073 - crispy_srv - INFO - Shutting down server
+03/31/2016 10:39:51 AM - INFO    - crispyd    - Started server on 0.0.0.0:8080
+03/31/2016 10:40:11 AM - DEBUG   - server_handler - connection from 127.0.0.1
+03/31/2016 10:40:19 AM - DEBUG   - cli        - do_help() was called
+03/31/2016 10:40:52 AM - DEBUG   - cli        - do_run() was called
+03/31/2016 10:41:11 AM - DEBUG   - cli        - Ctrl-D received... shutting down crispyd
+03/31/2016 10:41:12 AM - WARNING - crispyd    - Ctrl-C received... shutting down crispyd
