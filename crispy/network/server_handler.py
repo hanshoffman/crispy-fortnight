@@ -9,5 +9,5 @@ class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
 	return
     
     def handle(self):
-	logger.debug("BaseRequestHandler: connection from {}".format(self.client_address))
+	logger.debug("connection from {}".format(self.client_address[0]))
         return
