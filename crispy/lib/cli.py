@@ -5,6 +5,7 @@ import getpass
 import logging
 import sys
 
+from . myparser import *
 from crispy import __version__
 
 logger = logging.getLogger(__name__)
@@ -38,11 +39,31 @@ class CrispyCLI(cmd.Cmd):
 	self.doc_header = "Available commands:"
 	self.srv = srv
 
-    def do_EOF(self, args):
-	""" Use Ctrl-D (i.e. EOF) to exit. """
-        logger.debug("Ctrl-D received... shutting down crispyd")
-	print ""
-        sys.exit()
+    @staticmethod
+    def format_error(msg):
+        """ Return a formatted error log line. """
+        print "[!] " + msg.rstrip() + "\n"
+
+    @staticmethod
+    def format_info(msg):
+        """ Return a formatted info log line. """
+        print "[%] " + msg.rstrip() + "\n"
+
+    @staticmethod
+    def format_success(msg):
+        """ Return a formatted success log line. """
+        print "[+] " +  msg.rstrip() + "\n"
+
+    @staticmethod
+    def format_warning(msg):
+        """ Return a formatted warning log line. """
+        print "[*] " + msg.rstrip() + "\n"
+    
+    def do_exit(self, args):
+	""" Shutdown crispy daemon. All sessions will be lost. """
+	raise KeyboardInterrupt
+
+    do_quit = do_exit
 
     def do_help(self, args):
 	""" Help menu. """
@@ -50,19 +71,45 @@ class CrispyCLI(cmd.Cmd):
 	cmd.Cmd.do_help(self, args)
 
     def emptyline(self):
-	""" Do nothing when an emptyline is entered. """
+	""" Do nothing when an emptyline is entered instead of repeat last command. """
 	pass
 
     def do_modules(self, args):
 	""" List available modules. """
-	pass
+        self.format_error("implement me")
+
+    def do_run(self, args):
+        """ Run a module on one or multiple clients. """
+        logger.debug("do_run() was called")
+        self.format_error("implement me")
 
     def do_sessions(self, args):
 	""" List/interact with established sessions. """
 	logger.debug("do_sessions() was called")
-	print "implement me"
-    
-    def do_run(self, args):
-	""" Run a module on one or multiple clients. """
-	logger.debug("do_run() was called")
-	print "implement me"
+	
+	parser = CrispyArgumentParser(description=self.do_sessions.__doc__,
+                                       prog="sessions")
+	#parser.add_argument("-i",
+        #                dest="interact",
+	#		help="interact with the selected session",
+	#		metavar="<session_id>",
+	#		type=int)
+	#parser.add_argument("-k",
+        #                dest="kill",
+        #                help="kill the selected session",
+        #                metavar="<session_id>",
+        #                type=int)
+	parser.add_argument("-l",
+			action="store_true",
+			dest="list",
+                        help="list all active sessions")
+
+	try:
+	    pargs = parser.parse_args()
+	    print "*" + pargs 
+	    if pargs.list:
+		print "great success!"
+	        #for session in self.srv.get_sessions_list():
+	        #    print "{}".format(session.__str__)
+	except MyParserException:
+	    pass
