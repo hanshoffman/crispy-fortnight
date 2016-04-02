@@ -1,8 +1,7 @@
 import logging
 import SocketServer
 
-from .. network.server_handler import CrispyTCPServerHandler
-from . connection import CrispyConnection
+from .. network.handler import CrispyTCPServerHandler
 
 logger = logging.getLogger(__name__)
 
@@ -16,19 +15,30 @@ class CrispyTCPServer(SocketServer.TCPServer):
         SocketServer.TCPServer.__init__(self, server_address, handler_class)
         return
 
+    def serve_forever(self):
+        logger.info('Handling requests, press <Ctrl-C> to quit')
+        while True:
+            self.handle_request()
+        return
+
     def add_session(self, conn):
         """ Add remote implant to clients list. """
-	logger.debug("add_client() was called")
-	#new_client = CrispyConnection({})
-        # "Session {} opened ({}:{} <- {}:{})".format(self.current_id, server_ip, server_port, client_ip, client_port))
-	self.clients.append(new_client)
+	logger.debug("add_session() was called")
+        logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, 
+								self.server_address[0], 
+								self.server_address[1], 
+								conn.desc["conn"].client_address[0],
+								conn.desc["conn"].client_address[1]))
+	self.clients.append(conn)
+	self.current_id += 1
     
-    def remove_session(self, client):
+    def remove_session(self, conn):
         """ Remove remote implant from clients list. """
 	logger.debug("remove_client() was called")
-        self.clients.remove(client)
+        self.clients.remove(conn)
+	self.current_id -= 1
     
-    def list_sessions(self):
+    def get_sessions_list(self):
         """ Return a list of sessions connected to the C2 server. """
-	logger.debug("list_clients() was called")
+	logger.debug("list_sessions() was called")
         return self.clients
