@@ -52,8 +52,8 @@ def main():
 
     try:
 	app = CrispyCLI(srv)
-	thread.start_new_thread(app.cmdloop(), ())
-	srv.serve_forever()
+	thread.start_new_thread(srv.serve_forever, ())
+	app.cmdloop()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
 	srv.socket.close()
