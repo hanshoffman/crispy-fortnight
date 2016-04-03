@@ -1,18 +1,19 @@
 import logging
 import SocketServer
 
-from .. lib.connection import CrispyConnection
-from .. network.client_types import CrispyTCPClient
+from .. lib.client import CrispyClient
 
 logger = logging.getLogger(__name__)
 
 class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
     def __init__(self, request, client_address, server):
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
-	return
     
     def handle(self):
-	conn = CrispyConnection({"conn":self, "id":1, "user":"hdot", "platform":"darwin", "hostname":"GreenCouch.local", "macaddr":"60:f8:1d:b7:8e:b2"})
-	self.server.add_session(conn)
-	logger.debug(conn)
-	return
+	logger.debug("passing new connection to server")
+	self.server.add_client(self)
+	#need some way to stay in handle() until connection closes that way finish() can be called next to remove client once disconnected...
+	
+    def finish(self): #finish() is not what I need... it calls itself immediately after handle() which is obviously bad... what else?
+	logger.debug("finish")
+	#self.server.remove_client(self)
