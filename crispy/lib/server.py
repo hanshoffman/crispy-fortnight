@@ -16,7 +16,7 @@ class CrispyTCPServer(SocketServer.TCPServer):
         return
 
     def serve_forever(self):
-        logger.info('Handling requests, press <Ctrl-C> to quit')
+        logger.info("Listening for connections, press <Ctrl-C> to quit")
         while True:
             self.handle_request()
         return
@@ -42,3 +42,9 @@ class CrispyTCPServer(SocketServer.TCPServer):
         """ Return a list of sessions connected to the C2 server. """
 	logger.debug("list_sessions() was called")
         return self.clients
+
+    def iter_modules(self):
+	""" Iterate over all modules. """
+	mods = ["download", "upload", "drives"] #iterate through dir(modules) and pull __name__ and __doc__ of classname, convert to dictionary and store "drives - enumerate drives"
+						#format like old code to display "remote" and "local" commands
+	return sorted(mods)
