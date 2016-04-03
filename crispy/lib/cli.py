@@ -26,7 +26,7 @@ BANNER = "                                                                     \
    \  \::/       \  \:\         \__\/       /__/:/       \  \:\         \__\/  \n \
     \__\/         \__\/                     \__\/         \__\/                \n \
 									       \n \
-		 [   crispy-fortnight %s-%s   ]" %(__version__, __release_date__)
+		 [   crispy-fortnight %s-%s   ]\n" %(__version__, __release_date__)
 
 class CrispyCLI(cmd.Cmd):
     """ Available commands for crispy cli. """
@@ -65,7 +65,7 @@ class CrispyCLI(cmd.Cmd):
     
     def do_exit(self, args):
 	""" Shutdown crispy daemon. All sessions will be lost. """
-	raise KeyboardInterrupt
+	sys.exit()
 
     do_quit = do_exit
 
@@ -83,20 +83,32 @@ class CrispyCLI(cmd.Cmd):
 	print "{}".format(BANNER)
     
     def do_lcd(self, args):
-	""" Change directory on daemon. """
+	""" Change the cli working directory. """
 	logger.debug("do_lcd() was called")
-	self.format_error("implement me")
+	parser = CrispyArgumentParser(description=self.do_lcd.__doc__, prog="lcd")
+        parser.add_argument("dir", metavar="<DIR>", help="directory to change to")
+
+	try:
+            pargs = parser.parse_args(shlex.split(args))
+	    if os.path.isdir(pargs.dir):
+                os.chdir(pargs.dir)
+                self.format_success("Changed directory to {}".format(pargs.dir))
+            else:
+                self.format_error("Unknown directory: {}".format(pargs.dir))
+        except MyParserException as e:
+            print e
 
     def do_lpwd(self, args):
 	""" Print current working directory on daemon. """
 	logger.debug("do_lpwd() was called")
-	print "{}".format(os.getcwd())
+	print "{}\n".format(os.getcwd())
 
     def do_ls(self, args):
         """ Directory listing on daemon. """
         logger.debug("do_ls() was called")
 	for f in os.listdir(os.getcwd()):
 	    print "{}".format(f)
+	print ""
 
     def do_modules(self, args):
 	""" List available modules. """
@@ -110,39 +122,50 @@ class CrispyCLI(cmd.Cmd):
     def do_run(self, args):
         """ Run a module on one or multiple clients. """
         logger.debug("do_run() was called")
-        self.format_error("implement me")
+	parser = CrispyArgumentParser(description=self.do_run.__doc__, prog="run")
+	parser.add_argument("module", metavar="<module>", help="module name")
+	parser.add_argument("arguments", nargs=argparse.REMAINDER, metavar="<arguments>", help="module arguments")
+
+	try:
+	    pargs = parser.parse_args(shlex.split(args))
+	except MyParserException as e:
+            print e
+
+	selected_clients = "*"
+
+	#selected_clients.run_module(pargs.module, pargs.arguments)
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
 	logger.debug("do_sessions() was called")
 	
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
-	parser.add_argument("-i", "--interact",
+	parser.add_argument("-i",
                         dest="interact",
 			help="interact with the selected session",
 			metavar="<session_id>",
 			type=int)
-	parser.add_argument("-k", "--kill",
+	parser.add_argument("-k",
                         dest="kill",
                         help="kill the selected session",
                         metavar="<session_id>",
                         type=int)
-	parser.add_argument("-l", "--list",
+	parser.add_argument("-l",
 			action="store_true",
 			dest="list",
                         help="list all active sessions")
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
-	    if pargs.interact:
-		pass
-	    elif pargs.kill:
-		pass
+	    if isinstance(pargs.interact, int):
+		self.format_info("Interacting w/ session %s..." %pargs.interact)
+	    elif isinstance(pargs.kill, int):
+		self.format_info("Killing session %s..." %pargs.kill)
 	    elif pargs.list:
 		print "\nActive sessions:"
         	print "==================="
-	        for session in self.srv.get_sessions_list():
-	            print "{}".format(session.__str__)
-		#Id  Description    Tunnel
- 		#--  -----------    ------
+	        for client in self.srv.get_clients():
+	            print "{}".format(client.short_name())
+	            #print "{}".format(client) #long print
+		print ""
 	except MyParserException as e:
 	    print e
