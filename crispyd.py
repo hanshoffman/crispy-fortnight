@@ -19,10 +19,10 @@ def main():
                         required=True, 
                         type=str)
     argp.add_argument("--loglvl",
-			choices=["DEBUG", "ERROR", "INFO", "WARNING"],
+			choices=["DEBUG", "INFO", "WARNING", "ERROR"],
 			default="WARNING",
 			dest="loglevel",
-			help="change log verbosity (default: WARNING)",
+			help="change log verbosity (default: %(default)s)",
 			type=str)
     argp.add_argument("--version", action="version", version="%(prog)s {}".format(__version__))
     args = argp.parse_args()
@@ -51,12 +51,10 @@ def main():
     logging.info("Started server on {}:{}".format(srv.server_address[0], srv.server_address[1]))
 
     try:
-	app = CrispyCLI(srv)
 	thread.start_new_thread(srv.serve_forever, ())
-	app.cmdloop()
+	CrispyCLI(srv).cmdloop()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
-	srv.socket.close()
 
 if __name__ == "__main__":
     main()
