@@ -2,7 +2,7 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-class CrispyConnection(object):
+class CrispyClient(object):
     def __init__(self, desc):
         self.desc = desc
         self.conn = self.desc["conn"]
@@ -10,12 +10,14 @@ class CrispyConnection(object):
     def __str__(self):
         """ Return string representing a CrispyConnection object (full). """
         logger.debug("__str__() was called")
-	return "Connection(id=%d, user=%s, platform=%s, hostname=%s, macaddr=%s)" %(self.desc["id"], self.desc["user"], self.desc["platform"], self.desc["hostname"], self.desc["macaddr"])
-    
+	return "CrispyClient(id=%d, ip=%s, macaddr=%s, hostname=%s, platform=%s, proc_type=%s, proc_arch=%s, uptime=%s, date=%s, user=%s, home=%s, shell=%s)" %(
+		self.desc["id"], self.desc["ip"], self.desc["macaddr"], self.desc["hostname"], self.desc["platform"], self.desc["proc_type"], 
+		self.desc["proc_arch"], self.desc["uptime"], self.desc["date"], self.desc["user"], self.desc["home"], self.desc["shell"])
+
     def short_name(self):
 	""" Return string representing a CrispyConnection object (short). """
 	logger.debug("short_name() was called")
-	return self.desc["platform"][:3].lower() + "_" + self.desc["hostname"] + "_" + self.desc["macaddr"] 
+	return "CrispyClient(id=%d, user=%s, platform=%s, hostname=%s, macaddr=%s)" %(self.desc["id"], self.desc["user"], self.desc["platform"], self.desc["hostname"], self.desc["macaddr"]) 
 
     def is_android(self):
         """ Determine if platform connected is an Android device. """
@@ -62,7 +64,9 @@ class CrispyConnection(object):
         else:
             return False
 
-    def run_module(self, module_name, args):
+    def run_module(self, module, args):
 	""" Start a module on client. """
 	logger.debug("run_module() was called")
+	#get module name
+	#try catch module.run(args)
 	pass
