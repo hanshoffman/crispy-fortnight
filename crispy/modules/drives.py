@@ -1,14 +1,16 @@
 import os
 
-from lib.CrispyModule import *
+from .. lib.myparser import CrispyArgumentParser
+from .. lib.module import CrispyModule
 
 logger = logging.getLogger(__name__)
 
 class DrivesModule(CrispyModule):
-    """ A module to enumerate the HDD's on a remote machine. """
+    """ Enumerate the HDD's on a remote machine. """
     
     def init_argparse(self):
-	pass
+	self.parser = CrispyArgumentParser(prog="drives", description=self.__doc__)
+	#self.parser.add_argument()
 
     def run(self, args):
 	logger.debug("in module.py run()")
