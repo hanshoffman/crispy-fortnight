@@ -1,4 +1,6 @@
-import StringIO
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CrispyModule(object):
     """ Module object that all other modules will inherit from. """
@@ -8,8 +10,6 @@ class CrispyModule(object):
 
     def __init__(self, client, job):
 	self.client = client
-	self.job = job
-	self.stdout = StringIO.StringIO()
 
     def init_argparse(self):
 	""" Override this method to define your own arguments. """
@@ -29,18 +29,3 @@ class CrispyModule(object):
 	    return (True, "")
 	else:
 	    return (False, "This module currently only supports the following systems: %s" (','.join(self.compatible_systems)))
-
-    def log(self, msg):
-	self.stdout.write(msg)
-
-    def error(self, msg)
-	self.stdout.write(msg)
-
-    def warning(self, msg)
-	self.stdout.write(msg)
-
-    def success(self, msg)
-	self.stdout.write(msg)
-
-    def info(self, msg)
-	self.stdout.write(msg) 
