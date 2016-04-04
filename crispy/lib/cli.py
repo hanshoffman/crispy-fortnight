@@ -39,29 +39,43 @@ class CrispyCLI(cmd.Cmd):
 	    self.intro = BANNER
 	else:
 	    self.intro = ""
-	self.prompt="{}@crispy>> ".format(getpass.getuser())
+	if self.config.getboolean("CMDLINE", "use_color"):
+	    self.use_color = True
+	else:
+	    self.use_color = False
+	self.colors = {"red":"\033[0;31;40m", "green":"\033[0;32;40m", "yellow":"\033[0;33;40m", "gray":"\033[0;30;40m"}
+	self.color_stop = "\033[0m"
+	self.prompt = "{}@crispy>> ".format(getpass.getuser())
 	self.doc_header = "Available commands:"
 	self.srv = srv
 
-    @staticmethod
-    def format_error(msg):
-        """ Return a formatted error log line. """
-        print "[!] {}\n".format(msg.rstrip())
+    def format_error(self, msg):
+        """ Return a formatted error line to stdout. """
+	if self.use_color:
+	    print "{}[!] {}\n{}".format(self.colors["red"], msg.rstrip(), self.color_stop)
+	else:
+	    print "[!] {}\n".format(msg.rstrip())
 
-    @staticmethod
-    def format_info(msg):
-        """ Return a formatted info log line. """
-        print "[%] {}\n".format(msg.rstrip())
+    def format_info(self, msg):
+        """ Return a formatted info line to stdout. """
+        if self.use_color:
+	    print "{}[%] {}\n{}".format(self.colors["gray"], msg.rstrip(), self.color_stop)
+	else:
+	    print "[%] {}\n".format(msg.rstrip())
 
-    @staticmethod
-    def format_success(msg):
-        """ Return a formatted success log line. """
-        print "[+] {}\n".format(msg.rstrip())
+    def format_success(self, msg):
+        """ Return a formatted success line to stdout. """
+        if self.use_color:
+	    print "{}[+] {}\n{}".format(self.colors["green"], msg.rstrip(), self.color_stop)
+	else:
+	    print "[+] {}\n".format(msg.rstrip())
 
-    @staticmethod
-    def format_warning(msg):
-        """ Return a formatted warning log line. """
-        print "[*] {}\n".format(msg.rstrip())
+    def format_warning(self, msg):
+        """ Return a formatted warning line to stdout. """
+        if self.use_color:
+	    print "{}[*] {}\n{}".format(self.colors["yellow"], msg.rstrip(), self.color_stop)
+	else:
+	    print "[*] {}\n".format(msg.rstrip())
     
     def do_exit(self, args):
 	""" Shutdown crispy daemon. All sessions will be lost. """
@@ -94,7 +108,9 @@ class CrispyCLI(cmd.Cmd):
                 os.chdir(pargs.dir)
                 self.format_success("Changed directory to {}".format(pargs.dir))
             else:
-                self.format_error("Unknown directory: {}".format(pargs.dir))
+                #self.format_error("Unknown directory: {}".format(pargs.dir))
+                #self.format_error("Unknown directory: %s" %pargs.dir)
+		self.format_error("Unknown directory")
         except MyParserException as e:
             print e
 
