@@ -43,7 +43,7 @@ class CrispyCLI(cmd.Cmd):
 	    self.use_color = True
 	else:
 	    self.use_color = False
-	self.colors = {"red":"\033[0;31;40m", "green":"\033[0;32;40m", "yellow":"\033[0;33;40m", "gray":"\033[0;30;40m"}
+	self.colors = {"red":"\033[0;31;40m", "green":"\033[0;32;40m", "yellow":"\033[0;33;40m", "gray":"\033[0;37;40m"}
 	self.color_stop = "\033[0m"
 	self.prompt = "{}@crispy>> ".format(getpass.getuser())
 	self.doc_header = "Available commands:"
@@ -93,10 +93,18 @@ class CrispyCLI(cmd.Cmd):
 	pass
 
     def do_banner(self, args):
-	""" Print banner. """
-	print "{}".format(BANNER)
-    
-    def do_lcd(self, args):
+	""" Print crispy banner. """
+        logger.debug("do_banner() was called")
+	parser = CrispyArgumentParser(description=self.do_banner.__doc__, prog="banner")
+
+        try:
+            pargs = parser.parse_args(shlex.split(args))
+	    if pargs:
+                print "{}".format(BANNER)
+        except MyParserException as e:
+            print e	
+   	
+    def do_lcd(self, args): 
 	""" Change the cli working directory. """
 	logger.debug("do_lcd() was called")
 	parser = CrispyArgumentParser(description=self.do_lcd.__doc__, prog="lcd")
@@ -104,36 +112,57 @@ class CrispyCLI(cmd.Cmd):
 
 	try:
             pargs = parser.parse_args(shlex.split(args))
-	    if os.path.isdir(pargs.dir):
-                os.chdir(pargs.dir)
-                self.format_success("Changed directory to {}".format(pargs.dir))
-            else:
-                #self.format_error("Unknown directory: {}".format(pargs.dir))
-                #self.format_error("Unknown directory: %s" %pargs.dir)
-		self.format_error("Unknown directory")
+	    if pargs is None:
+		return
+	    else:
+	        if os.path.isdir(pargs.dir):
+                    os.chdir(pargs.dir)
+                    self.format_success("Changed directory to {}".format(pargs.dir))
+                else:
+		    self.format_error("Unknown directory")
         except MyParserException as e:
             print e
 
     def do_lpwd(self, args):
-	""" Print current working directory on daemon. """
+	""" Print current working directory on the crispy daemon. """
 	logger.debug("do_lpwd() was called")
-	print "{}\n".format(os.getcwd())
-
+	parser = CrispyArgumentParser(description=self.do_lpwd.__doc__, prog="lpwd")
+	
+	try:
+	    pargs = parser.parse_args(shlex.split(args))
+	    if pargs:
+	        print "{}\n".format(os.getcwd())
+	except MyParserException as e:
+            print e
+	
     def do_ls(self, args):
         """ Directory listing on daemon. """
         logger.debug("do_ls() was called")
-	for f in os.listdir(os.getcwd()):
-	    print "{}".format(f)
-	print ""
+        parser = CrispyArgumentParser(description=self.do_ls.__doc__, prog="ls")
+
+        try:
+            pargs = parser.parse_args(shlex.split(args))
+            if pargs:
+		for f in os.listdir(os.getcwd()):
+                    print "{}".format(f)
+                print ""
+        except MyParserException as e:
+            print e
 
     def do_modules(self, args):
 	""" List available modules. """
 	logger.debug("do_modules() was called")
-	print "\nAvailable modules:"
-	print "==================="
-	for mod in self.srv.iter_modules():
-	    print "{}".format(mod)
-	print ""
+        parser = CrispyArgumentParser(description=self.do_modules.__doc__, prog="modules")
+
+        try:
+            pargs = parser.parse_args(shlex.split(args))
+            if pargs:
+                print "\nAvailable modules:\n==================="
+        	for mod in self.srv.iter_modules():
+            	    print "{}".format(mod)
+        	print ""
+        except MyParserException as e:
+            print e
 
     def do_run(self, args):
         """ Run a module on one or multiple clients. """
@@ -156,32 +185,26 @@ class CrispyCLI(cmd.Cmd):
 	logger.debug("do_sessions() was called")
 	
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
-	parser.add_argument("-i",
-                        dest="interact",
-			help="interact with the selected session",
-			metavar="<session_id>",
-			type=int)
-	parser.add_argument("-k",
-                        dest="kill",
-                        help="kill the selected session",
-                        metavar="<session_id>",
-                        type=int)
-	parser.add_argument("-l",
-			action="store_true",
-			dest="list",
-                        help="list all active sessions")
+	parser.add_argument("-i", dest="interact", help="interact with the selected session", metavar="<session_id>", type=int)
+	parser.add_argument("-k", dest="kill", help="kill the selected session", metavar="<session_id>", type=int)
+	parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
+	
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
-	    if isinstance(pargs.interact, int):
-		self.format_info("Interacting w/ session %s..." %pargs.interact)
-	    elif isinstance(pargs.kill, int):
-		self.format_info("Killing session %s..." %pargs.kill)
-	    elif pargs.list:
-		print "\nActive sessions:"
-        	print "==================="
-	        for client in self.srv.get_clients():
-	            print "{}".format(client.short_name())
-	            #print "{}".format(client) #long print
-		print ""
+	    if pargs is None:
+		return
+	    else:
+		if isinstance(pargs.interact, int):
+		    self.format_info("Interacting w/ session %s..." %pargs.interact)
+	        elif isinstance(pargs.kill, int):
+		    self.format_info("Killing session %s..." %pargs.kill)
+		elif pargs.list:
+		    print "\nActive sessions:\n==================="
+	            for client in self.srv.get_clients():
+	                print "{}".format(client.short_name())
+	                #print "{}".format(client) #long print
+		    print ""
+		else:
+		    parser.print_help()
 	except MyParserException as e:
 	    print e

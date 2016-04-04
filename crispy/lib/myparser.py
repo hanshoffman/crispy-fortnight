@@ -11,15 +11,15 @@ class CrispyArgumentParser(argparse.ArgumentParser):
 	argparse.ArgumentParser.__init__(self, *args, **kwargs)
 
     def parse_known_args(self, args=None, namespace=None):
-        try:
+        """ Override method to prevent -h from printing then calling sys.exit(). """
+	try:
             return argparse.ArgumentParser.parse_known_args(self, args, namespace)
         except SystemExit:
-            pass
+	    pass
 
         return None, None
 
     def error(self, message):
-	""" Override method to prevent argparse from calling sys.exit() """
-	logger.error("CrispyArgumentParser error")
+	""" Override method to prevent argparse from calling sys.exit(). """
 	self.print_usage()
 	raise MyParserException
