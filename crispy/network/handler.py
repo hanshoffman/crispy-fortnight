@@ -1,5 +1,6 @@
 import logging
 import SocketServer
+import time
 
 from .. lib.client import CrispyClient
 
@@ -12,6 +13,8 @@ class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
     def handle(self):
 	logger.debug("passing new connection to server")
 	self.server.add_client(self)
+        while True:
+            time.sleep(1)
 	#need some way to stay in handle() until connection closes that way finish() can be called next to remove client once disconnected...
 	
     def finish(self): #finish() is not what I need... it calls itself immediately after handle() which is obviously bad... what else?
