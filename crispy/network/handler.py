@@ -1,8 +1,7 @@
 import logging
+import json
 import SocketServer
 import time
-
-from .. lib.client import CrispyClient
 
 logger = logging.getLogger(__name__)
 
@@ -12,8 +11,10 @@ class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
     
     def handle(self):
 	logger.debug("passing new connection to server")
-	self.server.add_client(self)
-        while True:
+        #logger.debug(json.loads(self.request.recv(1024).strip()))
+	l = json.loads(self.request.recv(1024).strip())
+	self.server.add_client(self, l)
+	while True:
             time.sleep(1)
 	#need some way to stay in handle() until connection closes that way finish() can be called next to remove client once disconnected...
 	
