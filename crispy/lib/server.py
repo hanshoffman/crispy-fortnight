@@ -22,27 +22,15 @@ class CrispyTCPServer(SocketServer.TCPServer):
 	while True:
             self.handle_request()
 
-    def add_client(self, conn):
+    def add_client(self, conn, l):
         """ Add new client to client list. """
 	logger.debug("add_session() was called")
-	cc = CrispyClient({
-			"conn":conn,
-			"id":self.current_id,
-			"ip":None,
-			"macaddr":None,
-			"hostname":None,
-			"platform":None,
-			"proc_type":None,
-			"proc_arch":None,
-			"uptime":None,
-			"date":None,
-			"user":None,
-			"home":None,
-			"shell":None})
+	cc = CrispyClient({"conn":conn, "id":self.current_id, "ip":conn.client_address[0], "macaddr":l[0], "hostname":l[1], "plat":l[2], 
+		"proc_type":l[3], "proc_arch":l[4], "uptime":l[5], "date":l[6], "user":l[7], "home":l[8], "shell":l[9]})
 	logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, self.server_address[0], self.server_address[1], conn.client_address[0], conn.client_address[1]))
 	self.clients.append(cc)
 	self.current_id += 1
-    
+
     def remove_client(self, conn):
         """ Remove client from client list. """
 	logger.debug("remove_client() was called")
