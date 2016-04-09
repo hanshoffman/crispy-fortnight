@@ -177,16 +177,16 @@ class CrispyCLI(cmd.Cmd):
             print e
 
 	selected_clients = "*"
-
-	#selected_clients.run_module(pargs.module, pargs.arguments)
+	#targets = self.srv.get_clients(selected_clients) #change srv code to include both a get_clients() & get_clients_list()
+	#targets.run_module(pargs.module, pargs.arguments)
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
 	logger.debug("do_sessions() was called")
-	
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
 	parser.add_argument("-i", dest="interact", help="interact with the selected session", metavar="<session_id>", type=int)
-	parser.add_argument("-k", dest="kill", help="kill the selected session", metavar="<session_id>", type=int)
+	#parser.add_argument("-f", "--filter", dest="filter", metavar="<client_filter>", help="clients to run module on (default: *)")
+	parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
 	parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
 	
 	try:
@@ -196,8 +196,9 @@ class CrispyCLI(cmd.Cmd):
 	    else:
 		if isinstance(pargs.interact, int):
 		    self.format_info("Interacting w/ session %s..." %pargs.interact)
-	        elif isinstance(pargs.kill, int):
-		    self.format_info("Killing session %s..." %pargs.kill)
+	        elif isinstance(pargs.kill_id, int):
+		    self.format_info("Killing session %s..." %pargs.kill_id)
+		    self.srv.remove_client_id(pargs.kill_id)
 		elif pargs.list:
 		    print "\nActive sessions:\n==================="
 	            for client in self.srv.get_clients():
