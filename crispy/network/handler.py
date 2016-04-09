@@ -1,23 +1,20 @@
 import logging
 import json
 import SocketServer
-import time
+import threading
 
 logger = logging.getLogger(__name__)
 
-class CrispyTCPServerHandler(SocketServer.BaseRequestHandler):
+class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def __init__(self, request, client_address, server):
         SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
-    
+
     def handle(self):
-	logger.debug("passing new connection to server")
-        #logger.debug(json.loads(self.request.recv(1024).strip()))
+	tc = threading.current_thread()
+	logger.debug("passing new threaded connection ({}) to server".format(tc.name))
 	l = json.loads(self.request.recv(1024).strip())
-	self.server.add_client(self, l)
-	while True:
-            time.sleep(1)
-	#need some way to stay in handle() until connection closes that way finish() can be called next to remove client once disconnected...
-	
-    def finish(self): #finish() is not what I need... it calls itself immediately after handle() which is obviously bad... what else?
+        self.server.add_client(self, l)
+
+    def finish(self):
 	logger.debug("finish")
-	#self.server.remove_client(self)
+	#self.server.remove_client(self) #code works but need way to keep code in handle() until disconnects when finish() is then called	

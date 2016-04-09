@@ -6,21 +6,16 @@ logger = logging.getLogger(__name__)
 
 from pkgutil import iter_modules
 from . client import CrispyClient
-from .. network.handler import CrispyTCPServerHandler
+from .. network.handler import ThreadedTCPRequestHandler
 
-class CrispyTCPServer(SocketServer.TCPServer):
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     """ Backend server methods for clients. """
 
-    def __init__(self, server_address, handler_class=CrispyTCPServerHandler):
+    def __init__(self, server_address, handler_class=ThreadedTCPRequestHandler):
         self.allow_reuse_address = True
         self.clients = []
         self.current_id = 1
         SocketServer.TCPServer.__init__(self, server_address, handler_class)
-
-    def serve_forever(self):
-        logger.info("Listening for connections, press <Ctrl-C> to quit")
-	while True:
-            self.handle_request()
 
     def add_client(self, conn, l):
         """ Add new client to client list. """
@@ -35,10 +30,18 @@ class CrispyTCPServer(SocketServer.TCPServer):
         """ Remove client from client list. """
 	logger.debug("remove_client() was called")
 	for client in self.clients:
-	    if client["conn"] == conn:
+	    if client.get_session() is conn:
                 self.clients.remove(client)
 	        self.current_id -= 1
-    
+
+    def remove_client_id(self, id): 
+    	""" Remove client given an id from client list. """
+	logger.debug("remove_client_id() was called")
+	for client in self.clients:
+	    if client.get_id() is id:
+		self.clients.remove(client)
+		self.current_id -= 1
+
     def get_clients(self):
         """ Return a list of clients connected to the C2 server. """
 	logger.debug("get_clients() was called")

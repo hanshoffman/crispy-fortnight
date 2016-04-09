@@ -1,10 +1,10 @@
 import argparse
 import logging
 import ConfigParser
-import thread
+import threading
 
-from crispy.network.handler import CrispyTCPServerHandler
-from crispy.lib.server import CrispyTCPServer
+from crispy.network.handler import ThreadedTCPRequestHandler
+from crispy.lib.server import ThreadedTCPServer
 from crispy.lib.cli import CrispyCLI
 from crispy import __version__
     
@@ -47,14 +47,19 @@ def main():
     host = config.get("DAEMON", "host")
     port = config.getint("DAEMON", "port")
 
-    srv = CrispyTCPServer((host, port), CrispyTCPServerHandler)
+    srv = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
     logging.info("Started server on {}:{}".format(srv.server_address[0], srv.server_address[1]))
 
     try:
-	thread.start_new_thread(srv.serve_forever, ())
+        tsrv = threading.Thread(target=srv.serve_forever)
+	tsrv.daemon = True
+        tsrv.start()
+	logging.info("Listening for connections, press <Ctrl-C> to quit")
 	CrispyCLI(srv).cmdloop()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
+	srv.shutdown()
+        srv.server_close()
 
 if __name__ == "__main__":
     main()
