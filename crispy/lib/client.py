@@ -14,6 +14,14 @@ class CrispyClient(object):
 		self.desc["id"], self.desc["ip"], self.desc["macaddr"], self.desc["hostname"], self.desc["plat"], self.desc["proc_type"], 
 		self.desc["proc_arch"], self.desc["uptime"], self.desc["date"], self.desc["user"], self.desc["home"], self.desc["shell"])
 
+    def get_session(self):
+	"""" Return socket for this CirspyClient object. """
+	return self.desc["conn"]
+
+    def get_id(self):
+	""" Return id for this CirspyClient object. """
+	return self.desc["id"]
+
     def short_name(self):
 	""" Return string representing a CrispyConnection object (short). """
 	logger.debug("short_name() was called")
