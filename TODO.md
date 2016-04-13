@@ -8,9 +8,9 @@
 -add controller functionality to keep control of ALL sessions connected to it
 	-be able to switch between sessions
 -add shell functionality
--add upgrade functionality
--add burn functionality
-
+-add client/server authentication using ssl (rsa keys)
+-create implant executable using pyinstaller
+-obfuscate that implant
 	
 Done:
 -get packaging set up properly so I run code from command line
