@@ -1,10 +1,10 @@
 import crispy.modules
 import logging
+import pkgutil
 import SocketServer
 
 logger = logging.getLogger(__name__)
 
-from pkgutil import iter_modules
 from . client import CrispyClient
 from .. network.handler import ThreadedTCPRequestHandler
 
@@ -39,6 +39,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 	logger.debug("remove_client_id() was called")
 	for client in self.clients:
 	    if client.get_id() is id:
+		#client.kill_session() #force socket to disconnect? 
 		self.clients.remove(client)
 		self.current_id -= 1
 
@@ -47,20 +48,27 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 	logger.debug("get_clients() was called")
         return self.clients
 
-    def iter_modules(self):
+    def get_modules(self):
 	""" Iterate over all modules. """
 	mods = []
-	for module_loader, module_name, ispkg in iter_modules(crispy.modules.__path__):
+	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
 	    mods.append(module_name)
 	    #logger.debug(self.get_module(module_name))
 	return sorted(mods)
 
     def get_module(self, name):
 	""" Return a module by name. """
-#	for module_loader, module_name, ispkg in iter_modules(crispy.modules.__path__):
-#	    if module_name.startswith("lib"):
-#		continue
-#	    if module_name == name:
-#		module = module_loader.find_module(module_name).load_module(module_name)
-#		logger.debug(module)
-	pass
+	logger.debug("get_module() was called")
+	class_name = None
+	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
+	    if module_name == name:
+		module = module_loader.find_module(module_name).load_module(module_name)
+		
+		if hasattr(module, "__class_name__"):
+		    class_name = module.__class_name__
+		
+		return getattr(module, class_name)
+
+    def module_parse_args(self, module_name, args):
+	""" Verify validity of args passed to given module. """
+	module = self.get_module(module_name)	

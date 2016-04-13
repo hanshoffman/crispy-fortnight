@@ -158,7 +158,7 @@ class CrispyCLI(cmd.Cmd):
             pargs = parser.parse_args(shlex.split(args))
             if pargs:
                 print "\nAvailable modules:\n==================="
-        	for mod in self.srv.iter_modules():
+        	for mod in self.srv.get_modules():
             	    print "{}".format(mod)
         	print ""
         except MyParserException as e:
@@ -179,6 +179,11 @@ class CrispyCLI(cmd.Cmd):
 	selected_clients = "*"
 	#targets = self.srv.get_clients(selected_clients) #change srv code to include both a get_clients() & get_clients_list()
 	#targets.run_module(pargs.module, pargs.arguments)
+	
+	try:
+	    mod = self.srv.get_module(pargs.module)
+	except Exception as e:
+	    self.format_error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
@@ -197,8 +202,8 @@ class CrispyCLI(cmd.Cmd):
 		if isinstance(pargs.interact, int):
 		    self.format_info("Interacting w/ session %s..." %pargs.interact)
 	        elif isinstance(pargs.kill_id, int):
-		    self.format_info("Killing session %s..." %pargs.kill_id)
 		    self.srv.remove_client_id(pargs.kill_id)
+		    self.format_success("Killed session %s..." %pargs.kill_id)
 		elif pargs.list:
 		    print "\nActive sessions:\n==================="
 	            for client in self.srv.get_clients():
