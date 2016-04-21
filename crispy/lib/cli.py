@@ -169,27 +169,35 @@ class CrispyCLI(cmd.Cmd):
         logger.debug("do_run() was called")
 	parser = CrispyArgumentParser(description=self.do_run.__doc__, prog="run")
 	parser.add_argument("module", metavar="<module>", help="module name")
+	parser.add_argument("session_id", metavar="<session id>", help="session to run on")
 	parser.add_argument("arguments", nargs=argparse.REMAINDER, metavar="<arguments>", help="module arguments")
 
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
 	except MyParserException as e:
             print e
-
-	selected_clients = "*"
-	#targets = self.srv.get_clients(selected_clients) #change srv code to include both a get_clients() & get_clients_list()
-	#targets.run_module(pargs.module, pargs.arguments)
+	    return
 	
 	try:
-	    mod = self.srv.get_module(pargs.module)
+	   _ =  self.srv.get_module(pargs.module)
 	except Exception as e:
 	    self.format_error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
+	
+	if not pargs.arguments: args = ""
+	#try:
+	#    self.srv.module_parse_args(pargs.module, pargs.arguments)
+	#except Exception as e:
+	#    self.format_error("wtf {}".format(e))
+	#    return
+
+	target = self.srv.get_client(int(pargs.session_id))
+	target.run_module(pargs.module, args)
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
 	logger.debug("do_sessions() was called")
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
-	parser.add_argument("-i", dest="interact", help="interact with the selected session", metavar="<session_id>", type=int)
+	parser.add_argument("-i", dest="interact", help="pop a shell on the given session", metavar="<session_id>", type=int)
 	#parser.add_argument("-f", "--filter", dest="filter", metavar="<client_filter>", help="clients to run module on (default: *)")
 	parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
 	parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
@@ -206,7 +214,7 @@ class CrispyCLI(cmd.Cmd):
 		    self.format_success("Killed session %s..." %pargs.kill_id)
 		elif pargs.list:
 		    print "\nActive sessions:\n==================="
-	            for client in self.srv.get_clients():
+	            for client in self.srv.get_client_list():
 	                print "{}".format(client.short_name())
 	                #print "{}".format(client) #long print
 		    print ""
