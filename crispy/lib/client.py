@@ -16,7 +16,7 @@ class CrispyClient(object):
 
     def get_session(self):
 	"""" Return socket for this CirspyClient object. """
-	return self.desc["conn"]
+	return self.conn
 
     def get_id(self):
 	""" Return id for this CirspyClient object. """
@@ -74,7 +74,9 @@ class CrispyClient(object):
 
     def run_module(self, module, args):
 	""" Start a module on client. """
-	logger.debug("run_module() was called")
-	#get module name
-	#try catch module.run(args)
-	pass
+	logger.debug("CrispyClient run_module() was called")
+	try:
+	    print "[{}] was called with [{}]".format(module, args)
+	    module.run(args)
+	except Exception as e:
+	    print "[!!] oh snap: {}".format(e)

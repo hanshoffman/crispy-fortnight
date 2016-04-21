@@ -37,38 +37,46 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     def remove_client_id(self, id): 
     	""" Remove client given an id from client list. """
 	logger.debug("remove_client_id() was called")
-	for client in self.clients:
-	    if client.get_id() is id:
-		#client.kill_session() #force socket to disconnect? 
-		self.clients.remove(client)
-		self.current_id -= 1
+	self.clients.remove(self.get_client(id))
+	self.current_id -= 1
 
-    def get_clients(self):
+    def get_client_list(self):
         """ Return a list of clients connected to the C2 server. """
-	logger.debug("get_clients() was called")
+	logger.debug("get_client_list() was called")
         return self.clients
+
+    def get_client(self, id):
+	""" Return client given session id. """
+	logger.debug("get_client() was called")
+	for client in self.clients:
+	    if client.get_id() == id:
+		return client
 
     def get_modules(self):
 	""" Iterate over all modules. """
+	logger.debug("get_modules() was called")
 	mods = []
 	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
 	    mods.append(module_name)
-	    #logger.debug(self.get_module(module_name))
 	return sorted(mods)
 
     def get_module(self, name):
 	""" Return a module by name. """
 	logger.debug("get_module() was called")
-	class_name = None
 	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
 	    if module_name == name:
 		module = module_loader.find_module(module_name).load_module(module_name)
+		class_name = None
 		
 		if hasattr(module, "__class_name__"):
 		    class_name = module.__class_name__
-		
 		return getattr(module, class_name)
 
     def module_parse_args(self, module_name, args):
 	""" Verify validity of args passed to given module. """
-	module = self.get_module(module_name)	
+	logger.debug("module_parse_args() was called")
+	module = self.get_module(module_name) 
+	print module
+	#ps = module(None, None)
+	return module.parse_args(args)
+	#return module.parser.parse_args(args)

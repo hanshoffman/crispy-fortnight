@@ -9,9 +9,9 @@ __class_name__ = "AppsModule"
 class AppsModule(CrispyModule):
     """ Enum applications on a remote machine. """
 
-    def init_argparse(self):
-        self.parser = CrispyArgumentParser(prog="apps", description=self.__doc__)
-        #self.parser.add_argument()
+    #def init_argparse(self):
+    #    self.parser = CrispyArgumentParser(prog="apps", description=self.__doc__)
 
     def run(self, args):
-        pass
+        logger.info("apps run() was called.")
+	print "winning!"
