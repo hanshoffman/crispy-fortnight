@@ -1,10 +1,12 @@
+import logging
 import os
 
-from .. lib.myparser import CrispyArgumentParser
-from .. lib.module import CrispyModule
+from crispy.lib.myparser import CrispyArgumentParser
+from crispy.lib.module import *
 
 logger = logging.getLogger(__name__)
 
+__class_name__ = "UsersModule"
 class UsersModule(CrispyModule):
     """ Enum users on a remote machine. """
 
@@ -13,4 +15,4 @@ class UsersModule(CrispyModule):
         #self.parser.add_argument()
 
     def run(self, args):
-        pass
+        logger.info("in users run()")

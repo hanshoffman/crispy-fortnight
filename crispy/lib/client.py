@@ -76,7 +76,7 @@ class CrispyClient(object):
 	""" Start a module on client. """
 	logger.debug("CrispyClient run_module() was called")
 	try:
-	    print "[{}] was called with [{}]".format(module, args)
+	    print "{} was called with [{}] args".format(module, args)
 	    module.run(args)
 	except Exception as e:
 	    print "[!!] oh snap: {}".format(e)

@@ -1,28 +1,40 @@
 import crispy.modules
+import json
 import logging
 import pkgutil
-import SocketServer
+import socket
+import threading
+
+from .. lib.client import CrispyClient
 
 logger = logging.getLogger(__name__)
 
-from . client import CrispyClient
-from .. network.handler import ThreadedTCPRequestHandler
-
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+class RawSocketServer(threading.Thread):
     """ Backend server methods for clients. """
 
-    def __init__(self, server_address, handler_class=ThreadedTCPRequestHandler):
-        self.allow_reuse_address = True
+    def __init__(self, host, port):
         self.clients = []
         self.current_id = 1
-        SocketServer.TCPServer.__init__(self, server_address, handler_class)
+        self.host = host
+        self.port = port
+        self.srvsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.srvsocket.bind((host, port))
+        self.srvsocket.listen(5)
+        threading.Thread.__init__(self)
 
-    def add_client(self, conn, l):
+    def run(self):
+        while True:
+            conn, addr = self.srvsocket.accept()
+            self.add_client(conn, addr, json.loads(conn.recv(1024)))
+
+    def shutdown(self):
+        self.srvsocket.close()
+
+    def add_client(self, conn, addr, l):
         """ Add new client to client list. """
 	logger.debug("add_session() was called")
-	cc = CrispyClient({"conn":conn, "id":self.current_id, "ip":conn.client_address[0], "macaddr":l[0], "hostname":l[1], "plat":l[2], 
-		"proc_type":l[3], "proc_arch":l[4], "uptime":l[5], "date":l[6], "user":l[7], "home":l[8], "shell":l[9]})
-	logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, self.server_address[0], self.server_address[1], conn.client_address[0], conn.client_address[1]))
+	cc = CrispyClient({"conn":conn, "id":self.current_id, "ip":addr[0], "macaddr":l[0], "hostname":l[1], "plat":l[2], "proc_type":l[3], "proc_arch":l[4], "uptime":l[5], "date":l[6], "user":l[7], "home":l[8], "shell":l[9]})
+	logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, self.host, self.port, addr[0], addr[1]))
 	self.clients.append(cc)
 	self.current_id += 1
 
@@ -66,11 +78,11 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
 	    if module_name == name:
 		module = module_loader.find_module(module_name).load_module(module_name)
-		class_name = None
+                class_name = None
 		
 		if hasattr(module, "__class_name__"):
 		    class_name = module.__class_name__
-		return getattr(module, class_name)
+		return getattr(module, class_name)(module)
 
     def module_parse_args(self, module_name, args):
 	""" Verify validity of args passed to given module. """

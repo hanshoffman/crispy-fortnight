@@ -6,9 +6,8 @@ class CrispyModule(object):
     """ Module object that all other modules will inherit from. """
     
     compatible_systems = []
-    category = "general"
 
-    def __init__(self, client, job):
+    def __init__(self, client):
 	self.client = client
 
     def init_argparse(self):

@@ -5,11 +5,13 @@ import getpass
 import logging
 import os
 import shlex
+import subprocess
 import sys
 
 from . myparser import *
 from crispy import __version__
 from crispy import __release_date__
+from .. modules import *
 
 logger = logging.getLogger(__name__)
 
@@ -52,33 +54,39 @@ class CrispyCLI(cmd.Cmd):
     def format_error(self, msg):
         """ Return a formatted error line to stdout. """
 	if self.use_color:
-	    print "{}[!] {}\n{}".format(self.colors["red"], msg.rstrip(), self.color_stop)
+	    #print "{}[!] {}{}".format(self.colors["red"], msg.rstrip(), self.color_stop)
+	    print "{}[!] {}{}".format(self.colors["red"], msg, self.color_stop)
 	else:
-	    print "[!] {}\n".format(msg.rstrip())
+	    print "[!] {}".format(msg.rstrip())
 
     def format_info(self, msg):
         """ Return a formatted info line to stdout. """
         if self.use_color:
-	    print "{}[%] {}\n{}".format(self.colors["gray"], msg.rstrip(), self.color_stop)
+	    print "{}[*] {}{}".format(self.colors["gray"], msg, self.color_stop)
 	else:
-	    print "[%] {}\n".format(msg.rstrip())
+	    print "[*] {}".format(msg.rstrip())
 
     def format_success(self, msg):
         """ Return a formatted success line to stdout. """
         if self.use_color:
-	    print "{}[+] {}\n{}".format(self.colors["green"], msg.rstrip(), self.color_stop)
+	    print "{}[+] {}{}".format(self.colors["green"], msg, self.color_stop)
 	else:
-	    print "[+] {}\n".format(msg.rstrip())
+	    print "[+] {}".format(msg.rstrip())
 
     def format_warning(self, msg):
         """ Return a formatted warning line to stdout. """
         if self.use_color:
-	    print "{}[*] {}\n{}".format(self.colors["yellow"], msg.rstrip(), self.color_stop)
+	    print "{}[-] {}{}".format(self.colors["yellow"], msg, self.color_stop)
 	else:
-	    print "[*] {}\n".format(msg.rstrip())
+	    print "[-] {}".format(msg.rstrip())
     
+    def do_clear(self, args):
+        """ Clear the screen. """
+        subprocess.call(['clear'])    
+
     def do_exit(self, args):
 	""" Shutdown crispy daemon. All sessions will be lost. """
+        self.srv.shutdown()
 	sys.exit()
 
     do_quit = do_exit
@@ -92,18 +100,6 @@ class CrispyCLI(cmd.Cmd):
 	""" Do nothing when an emptyline is entered instead of repeat last command. """
 	pass
 
-    def do_banner(self, args):
-	""" Print crispy banner. """
-        logger.debug("do_banner() was called")
-	parser = CrispyArgumentParser(description=self.do_banner.__doc__, prog="banner")
-
-        try:
-            pargs = parser.parse_args(shlex.split(args))
-	    if pargs:
-                print "{}".format(BANNER)
-        except MyParserException as e:
-            print e	
-   	
     def do_lcd(self, args): 
 	""" Change the cli working directory. """
 	logger.debug("do_lcd() was called")
@@ -179,7 +175,7 @@ class CrispyCLI(cmd.Cmd):
 	    return
 	
 	try:
-	   _ =  self.srv.get_module(pargs.module)
+	    mod =  self.srv.get_module(pargs.module) #<class 'apps.AppsModule'>+apps
 	except Exception as e:
 	    self.format_error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
 	
@@ -189,16 +185,19 @@ class CrispyCLI(cmd.Cmd):
 	#except Exception as e:
 	#    self.format_error("wtf {}".format(e))
 	#    return
-
-	target = self.srv.get_client(int(pargs.session_id))
-	target.run_module(pargs.module, args)
+        
+        try:
+	    target = self.srv.get_client(int(pargs.session_id))
+            self.format_info("Running {} module now...".format(pargs.module))
+	    target.run_module(mod, args) 
+        except Exception as e:
+            self.format_error(e)
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
 	logger.debug("do_sessions() was called")
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
 	parser.add_argument("-i", dest="interact", help="pop a shell on the given session", metavar="<session_id>", type=int)
-	#parser.add_argument("-f", "--filter", dest="filter", metavar="<client_filter>", help="clients to run module on (default: *)")
 	parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
 	parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
 	
@@ -208,15 +207,15 @@ class CrispyCLI(cmd.Cmd):
 		return
 	    else:
 		if isinstance(pargs.interact, int):
-		    self.format_info("Interacting w/ session %s..." %pargs.interact)
+		    self.format_error("Not implemented yet")
+		    #self.format_info("Interacting w/ session %s..." %pargs.interact)
 	        elif isinstance(pargs.kill_id, int):
-		    self.srv.remove_client_id(pargs.kill_id)
+		    self.srv.remove_client(self.srv.get_client(int(pargs.kill_id)).get_session())
 		    self.format_success("Killed session %s..." %pargs.kill_id)
 		elif pargs.list:
 		    print "\nActive sessions:\n==================="
 	            for client in self.srv.get_client_list():
 	                print "{}".format(client.short_name())
-	                #print "{}".format(client) #long print
 		    print ""
 		else:
 		    parser.print_help()

