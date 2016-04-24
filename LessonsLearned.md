@@ -23,4 +23,8 @@
  use threading in a unconventional way. Then I had to raise a KeyboardException to 
  have a "clean" exit from the cmdloop. 
 
-*@staticmethod decorator does not pass class instance (self) to method. 
+*@staticmethod decorator does not pass class instance (self) to method.
+
+*Global Interpreter Lock (GIL) causes major issues with threading. The "threading" library
+ is basically an ovelay to the "thread" library. These threads actually run sequentially if
+ placed one after another. Not cool. https://jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/ 
