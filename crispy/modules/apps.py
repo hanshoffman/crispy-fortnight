@@ -17,3 +17,12 @@ class AppsModule(CrispyModule):
 
     def run(self, args):
         logger.info("apps run() was called.")
+        print self.client.conn
+
+        #apps = os.listdir('/Applications')
+        #for app in apps:
+        #    if app[0] == '.':
+        #        continue
+        #    else:
+        #        info += "\t%s\n" %app
+        #return info

@@ -1,10 +1,12 @@
+import logging
 import os
 
-from .. lib.myparser import CrispyArgumentParser
-from .. lib.module import CrispyModule
+from crispy.lib.myparser import CrispyArgumentParser
+from crispy.lib.module import *
 
 logger = logging.getLogger(__name__)
 
+__class_name__ = "DownloadModule"
 class DownloadModule(CrispyModule):
     """ Download file from remote machine. """
 
@@ -17,10 +19,10 @@ class DownloadModule(CrispyModule):
 	remote_file = "file.jpg"
 	
 	try:
-	    self.format_info("Attempting download of %s ..." %remote_file)
-	    print "call to download()"
-	    self.format_success("File transfer complete.")
+	    #self.format_info("Attempting download of %s ..." %remote_file) #how can I call format_* from here??
+	    logger.info("Download file now...")
+	    #self.format_success("File transfer complete.")
 	    logger.info("File transfer complete.")
 	except:
-	    self.format_error("File transfer failed.")
+	    #self.format_error("File transfer failed.")
 	    logger.error("File transfer failed.")

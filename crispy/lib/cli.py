@@ -171,13 +171,16 @@ class CrispyCLI(cmd.Cmd):
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
 	except MyParserException as e:
-            print e
+            self.format_error(e)
 	    return
 	
-	try:
-	    mod =  self.srv.get_module(pargs.module) #<class 'apps.AppsModule'>+apps
+        target = self.srv.get_client(int(pargs.session_id))
+	
+        try:
+	    mod =  self.srv.get_module(pargs.module, target) 
 	except Exception as e:
 	    self.format_error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
+            return
 	
 	if not pargs.arguments: args = ""
 	#try:
@@ -187,7 +190,6 @@ class CrispyCLI(cmd.Cmd):
 	#    return
         
         try:
-	    target = self.srv.get_client(int(pargs.session_id))
             self.format_info("Running {} module now...".format(pargs.module))
 	    target.run_module(mod, args) 
         except Exception as e:

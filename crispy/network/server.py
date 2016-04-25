@@ -72,7 +72,7 @@ class RawSocketServer(threading.Thread):
 	    mods.append(module_name)
 	return sorted(mods)
 
-    def get_module(self, name):
+    def get_module(self, name, target):
 	""" Return a module by name. """
 	logger.debug("get_module() was called")
 	for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
@@ -82,7 +82,7 @@ class RawSocketServer(threading.Thread):
 		
 		if hasattr(module, "__class_name__"):
 		    class_name = module.__class_name__
-		return getattr(module, class_name)(module)
+		return getattr(module, class_name)(target)
 
     def module_parse_args(self, module_name, args):
 	""" Verify validity of args passed to given module. """
