@@ -1,6 +1,7 @@
 import argparse
 import cmd
 import ConfigParser
+import fprint
 import getpass
 import logging
 import os
@@ -8,10 +9,10 @@ import shlex
 import subprocess
 import sys
 
-from . myparser import *
-from crispy import __version__
 from crispy import __release_date__
+from crispy import __version__
 from .. modules import *
+from . myparser import *
 
 logger = logging.getLogger(__name__)
 
@@ -41,45 +42,10 @@ class CrispyCLI(cmd.Cmd):
 	    self.intro = BANNER
 	else:
 	    self.intro = ""
-	if self.config.getboolean("CMDLINE", "use_color"):
-	    self.use_color = True
-	else:
-	    self.use_color = False
-	self.colors = {"red":"\033[0;31;40m", "green":"\033[0;32;40m", "yellow":"\033[0;33;40m", "gray":"\033[0;37;40m"}
-	self.color_stop = "\033[0m"
 	self.prompt = "{}@crispy>> ".format(getpass.getuser())
 	self.doc_header = "Available commands:"
 	self.srv = srv
 
-    def format_error(self, msg):
-        """ Return a formatted error line to stdout. """
-	if self.use_color:
-	    #print "{}[!] {}{}".format(self.colors["red"], msg.rstrip(), self.color_stop)
-	    print "{}[!] {}{}".format(self.colors["red"], msg, self.color_stop)
-	else:
-	    print "[!] {}".format(msg.rstrip())
-
-    def format_info(self, msg):
-        """ Return a formatted info line to stdout. """
-        if self.use_color:
-	    print "{}[*] {}{}".format(self.colors["gray"], msg, self.color_stop)
-	else:
-	    print "[*] {}".format(msg.rstrip())
-
-    def format_success(self, msg):
-        """ Return a formatted success line to stdout. """
-        if self.use_color:
-	    print "{}[+] {}{}".format(self.colors["green"], msg, self.color_stop)
-	else:
-	    print "[+] {}".format(msg.rstrip())
-
-    def format_warning(self, msg):
-        """ Return a formatted warning line to stdout. """
-        if self.use_color:
-	    print "{}[-] {}{}".format(self.colors["yellow"], msg, self.color_stop)
-	else:
-	    print "[-] {}".format(msg.rstrip())
-    
     def do_clear(self, args):
         """ Clear the screen. """
         subprocess.call(['clear'])    
@@ -113,11 +79,11 @@ class CrispyCLI(cmd.Cmd):
 	    else:
 	        if os.path.isdir(pargs.dir):
                     os.chdir(pargs.dir)
-                    self.format_success("Changed directory to {}".format(pargs.dir))
+                    fprint.success("Changed directory to {}".format(pargs.dir))
                 else:
-		    self.format_error("Unknown directory")
+		    fprint.error("Unknown directory")
         except MyParserException as e:
-            print e
+            fprint(e)
 
     def do_lpwd(self, args):
 	""" Print current working directory on the crispy daemon. """
@@ -129,7 +95,7 @@ class CrispyCLI(cmd.Cmd):
 	    if pargs:
 	        print "{}\n".format(os.getcwd())
 	except MyParserException as e:
-            print e
+            fprint(e)
 	
     def do_ls(self, args):
         """ Directory listing on daemon. """
@@ -139,11 +105,12 @@ class CrispyCLI(cmd.Cmd):
         try:
             pargs = parser.parse_args(shlex.split(args))
             if pargs:
+                print "\nDirectory listing:\n==================="
 		for f in os.listdir(os.getcwd()):
                     print "{}".format(f)
                 print ""
         except MyParserException as e:
-            print e
+            fprint(e)
 
     def do_modules(self, args):
 	""" List available modules. """
@@ -158,7 +125,7 @@ class CrispyCLI(cmd.Cmd):
             	    print "{}".format(mod)
         	print ""
         except MyParserException as e:
-            print e
+            fprint(e)
 
     def do_run(self, args):
         """ Run a module on one or multiple clients. """
@@ -171,7 +138,7 @@ class CrispyCLI(cmd.Cmd):
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
 	except MyParserException as e:
-            self.format_error(e)
+            fprint.error(e)
 	    return
 	
         target = self.srv.get_client(int(pargs.session_id))
@@ -179,21 +146,20 @@ class CrispyCLI(cmd.Cmd):
         try:
 	    mod =  self.srv.get_module(pargs.module, target) 
 	except Exception as e:
-	    self.format_error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
+	    fprint.error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
             return
 	
 	if not pargs.arguments: args = ""
 	#try:
 	#    self.srv.module_parse_args(pargs.module, pargs.arguments)
 	#except Exception as e:
-	#    self.format_error("wtf {}".format(e))
+	#    fprint.error("wtf {}".format(e))
 	#    return
         
         try:
-            self.format_info("Running {} module now...".format(pargs.module))
 	    target.run_module(mod, args) 
         except Exception as e:
-            self.format_error(e)
+            fprint.error(e)
 
     def do_sessions(self, args):
 	""" Active session manipulation and interaction. """
@@ -201,6 +167,7 @@ class CrispyCLI(cmd.Cmd):
 	parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
 	parser.add_argument("-i", dest="interact", help="pop a shell on the given session", metavar="<session_id>", type=int)
 	parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
+	parser.add_argument("-K", action="store_true", dest="kill_all", help="kill all connected sessions")
 	parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
 	
 	try:
@@ -209,11 +176,14 @@ class CrispyCLI(cmd.Cmd):
 		return
 	    else:
 		if isinstance(pargs.interact, int):
-		    self.format_error("Not implemented yet")
-		    #self.format_info("Interacting w/ session %s..." %pargs.interact)
+		    fprint.error("Not implemented yet")
+		    #fprint.info("Interacting w/ session %s..." %pargs.interact)
 	        elif isinstance(pargs.kill_id, int):
 		    self.srv.remove_client(self.srv.get_client(int(pargs.kill_id)).get_session())
-		    self.format_success("Killed session %s..." %pargs.kill_id)
+		    fprint.success("Killed session %s..." %pargs.kill_id)
+                elif pargs.kill_all:
+                    self.srv.remove_all()
+                    fprint.success("All sessions killed.")
 		elif pargs.list:
 		    print "\nActive sessions:\n==================="
 	            for client in self.srv.get_client_list():
@@ -222,4 +192,4 @@ class CrispyCLI(cmd.Cmd):
 		else:
 		    parser.print_help()
 	except MyParserException as e:
-	    print e
+	    fprint.error(e)
