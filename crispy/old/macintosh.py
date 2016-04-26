@@ -26,15 +26,6 @@ class Mac(Base):
         
         return info
     
-    def enum_printers(self):
-        info = "[*] Printers:\n"
-        
-        printers = os.listdir('/private/etc/cups/ppd/')
-        for printer in printers:
-            info += "\t%s\n" %printer[:-4]
-    
-        return info
-        
     def get_ssh_keys(self):
         info = "[*] Searching for ssh keys:\n"
         ignoredFolders = ['Guest', 'Shared']
@@ -54,6 +45,3 @@ class Mac(Base):
                     info += "\t" + f + "\n"
         
         return info
-    
-    def enable_persistence(self):
-        pass

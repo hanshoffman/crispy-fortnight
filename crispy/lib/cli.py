@@ -83,7 +83,7 @@ class CrispyCLI(cmd.Cmd):
                 else:
 		    fprint.error("Unknown directory")
         except MyParserException as e:
-            fprint(e)
+            print e
 
     def do_lpwd(self, args):
 	""" Print current working directory on the crispy daemon. """
@@ -95,7 +95,7 @@ class CrispyCLI(cmd.Cmd):
 	    if pargs:
 	        print "{}\n".format(os.getcwd())
 	except MyParserException as e:
-            fprint(e)
+            print e
 	
     def do_ls(self, args):
         """ Directory listing on daemon. """
@@ -110,7 +110,7 @@ class CrispyCLI(cmd.Cmd):
                     print "{}".format(f)
                 print ""
         except MyParserException as e:
-            fprint(e)
+            print e
 
     def do_modules(self, args):
 	""" List available modules. """
@@ -125,7 +125,7 @@ class CrispyCLI(cmd.Cmd):
             	    print "{}".format(mod)
         	print ""
         except MyParserException as e:
-            fprint(e)
+            print e
 
     def do_run(self, args):
         """ Run a module on one or multiple clients. """
@@ -138,7 +138,7 @@ class CrispyCLI(cmd.Cmd):
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
 	except MyParserException as e:
-            fprint.error(e)
+            print e
 	    return
 	
         target = self.srv.get_client(int(pargs.session_id))
@@ -192,4 +192,4 @@ class CrispyCLI(cmd.Cmd):
 		else:
 		    parser.print_help()
 	except MyParserException as e:
-	    fprint.error(e)
+	    print e

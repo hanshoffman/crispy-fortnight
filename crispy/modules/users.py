@@ -19,12 +19,13 @@ class UsersModule(CrispyModule):
     #    #self.parser.add_argument()
 
     def marshall_me(self):
-        import subprocess 
-        
+        import os 
+       
+        ignore = ['.localized', 'Guest', 'Shared']
         info = ""
-        users = subprocess.check_output(['dscl', '.', '-ls', '/Users'])
+        users = os.listdir('/Users')
         for user in users:
-            if not user.startswith('_'):
+            if user not in ignore:
                 info += "{}\n".format(user)
         return info
 

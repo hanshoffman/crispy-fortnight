@@ -19,13 +19,24 @@ class AppsModule(CrispyModule):
 
     def marshall_me(self):
         import os
-        
-        info = ""
-        apps = os.listdir('/Applications')
-        for app in apps:
-            if not app.startswith('.'):
-                info += "{}\n".format(app)
-        return info
+        import plistlib
+
+        try:
+            info = ""
+            apps = os.listdir('/Applications')
+            for app in apps:
+                if app.endswith(".app"):
+                    pl = plistlib.readPlist('/Applications/' + app + '/Contents/Info.plist')
+                    info += "{} {}\n".format(app, pl["CFBundleShortVersionString"])
+            return info
+        except Exception as e:
+            return e
+
+    # for i in /Applications/*.app
+    # do
+    # Printf "$i \t" | cut -c15-1000
+    # /usr/libexec/PlistBuddy -c Print:CFBundleShortVersionString: "$i"/Contents/info.plist
+    # done
 
     def run(self, args):
         logger.debug("apps () was called.")
