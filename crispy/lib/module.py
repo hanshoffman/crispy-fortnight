@@ -5,8 +5,6 @@ logger = logging.getLogger(__name__)
 class CrispyModule(object):
     """ Module object that all other modules will inherit from. """
     
-    compatible_systems = []
-
     def __init__(self, client):
 	self.client = client
 
