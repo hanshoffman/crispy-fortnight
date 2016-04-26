@@ -1,8 +1,8 @@
 import logging
-import os
 
 from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
+from crispy.lib.fprint import *
 
 logger = logging.getLogger(__name__)
 
@@ -14,13 +14,22 @@ class DrivesModule(CrispyModule):
 	self.parser = CrispyArgumentParser(prog="drives", description=self.__doc__)
 	#self.parser.add_argument()
 
-    def run(self, args):
-	logger.debug("in module.py run()")
-	info = "[*] Disk Partitions:\n"
+    def marshall_me(self):
+        import os
 
         partitions = os.listdir('/Volumes')
+        
+        info = ""
         for disk in partitions:
             info += "\t%s" %disk
-
-	logger.debug(info)
         return info + "\n"
+
+    def run(self, args):
+	logger.debug("in module.py run()")
+	info("Getting Disk Partitions now...\n")
+        
+        try:
+            self.marshall_me()
+            success("Done.")
+        except Exception as e:
+            error(e)
