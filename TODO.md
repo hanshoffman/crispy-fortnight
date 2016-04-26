@@ -1,4 +1,3 @@
--set up code to work with "modules"
 -add screenshot?
 	-see how metasploit does it for Mac
 	-https://github.com/ponty/pyscreenshot/blob/master/pyscreenshot/plugins/mac_screencapture.py (mac)
@@ -20,3 +19,4 @@ Done:
 -get upload/download functionality added
 -add AES-256
 -add reverse connection instead of just bind
+-set up code to work with "modules"
