@@ -38,6 +38,13 @@ class RawSocketServer(threading.Thread):
 	self.clients.append(cc)
 	self.current_id += 1
 
+    def remove_all(self):
+        """ Remove all clients from client list. """
+        logger.debug("remove_all() was called")
+        for client in self.clients:
+            client.get_session().close()
+            self.clients.remove(client)
+
     def remove_client(self, conn):
         """ Remove client from client list. """
 	logger.debug("remove_client() was called")
