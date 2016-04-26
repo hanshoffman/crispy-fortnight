@@ -26,37 +26,6 @@ class Mac(Base):
         
         return info
     
-    def enum_users(self):
-        info = "[*] Users:\n"
-        
-        users = subprocess.check_output(['dscl', '.', '-ls', '/Users'])
-        for user in users:
-            if user[0] != '_':
-                info += "\t%s" %user
-        
-        return info
-    
-    def enum_applications(self):
-        info = "[*] Installed Applications:\n"
-    
-        apps = os.listdir('/Applications')
-        for app in apps:
-            if app[0] == '.':
-                continue
-            else:
-                info += "\t%s\n" %app
-      
-        return info
-        
-    def enum_drives(self):
-        info = "[*] Disk Partitions:\n"
-        
-        partitions = os.listdir('/Volumes')
-        for disk in partitions:
-            info += "\t%s" %disk
-            
-        return info + "\n"
-        
     def enum_printers(self):
         info = "[*] Printers:\n"
         
