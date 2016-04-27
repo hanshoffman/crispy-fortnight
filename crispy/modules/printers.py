@@ -21,7 +21,7 @@ class PrintersModule(CrispyModule):
     def marshall_me(self):
         import os
         
-        info = ""
+        info = "\n"
         printers = os.listdir('/private/etc/cups/ppd/')
         for printer in printers:
             info += "{}\n".format(printer[:-4])

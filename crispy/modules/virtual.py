@@ -11,8 +11,7 @@ __class_name__ = "VirtualModule"
 class VirtualMachineModule(CrispyModule):
     """ Determine if remote machine is a virtual machine. """
 
-    # can be: 'darwin', 'nt', 'android'
-    compatible_systems = ['darwin']
+    compatible_systems = ['all']
 
     def init_argparse(self):
         self.parser = CrispyArgumentParser(prog="virtual", description=self.__doc__)

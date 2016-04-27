@@ -140,8 +140,12 @@ class CrispyCLI(cmd.Cmd):
 	except MyParserException as e:
             print e
 	    return
-	
-        target = self.srv.get_client(int(pargs.session_id))
+
+        try:
+            target = self.srv.get_client(int(pargs.session_id))
+        except Exception as e:
+            fprint.error("Improper session id.")
+            return
 	
         try:
 	    mod =  self.srv.get_module(pargs.module, target) 
@@ -149,13 +153,8 @@ class CrispyCLI(cmd.Cmd):
 	    fprint.error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
             return
 	
-	if not pargs.arguments: args = ""
-	#try:
-	#    self.srv.module_parse_args(pargs.module, pargs.arguments)
-	#except Exception as e:
-	#    fprint.error("wtf {}".format(e))
-	#    return
-        
+        args = "" if not pargs.arguments else pargs.arguments
+
         try:
 	    target.run_module(mod, args) 
         except Exception as e:

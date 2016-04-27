@@ -28,6 +28,7 @@ class RawSocketServer(threading.Thread):
             self.add_client(conn, addr, json.loads(conn.recv(1024)))
 
     def shutdown(self):
+        self.remove_all()
         self.srvsocket.close()
 
     def add_client(self, conn, addr, l):

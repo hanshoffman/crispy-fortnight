@@ -79,4 +79,4 @@ class CrispyClient(object):
 	try:
 	    module.run(args)
 	except Exception as e:
-	    fprint.error("oh snap: {}".format(e))
+	    fprint.error("{}".format(e))

