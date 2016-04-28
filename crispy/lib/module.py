@@ -8,9 +8,9 @@ class CrispyModule(object):
     def __init__(self, client):
 	self.client = client
 
-    def init_argparse(self):
+    def check_args(self, args):
 	""" Override this method to define your own arguments. """
-	pass
+	return True
 
     def is_compatible(self):
 	""" Override this method to define if module is compatible with the given client. """
