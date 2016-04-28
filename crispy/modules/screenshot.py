@@ -1,18 +1,18 @@
 import logging
 import os
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
+from crispy.lib.fprint import *
 
 logger = logging.getLogger(__name__)
 
 __class_name__ = "ScreenshotModule"
 class ScreenshotModule(CrispyModule):
-    """ Determine if and which (if any) AV is on a remote machine. """
+    """ Take a screenshot of a remote machine. """
 
-    def init_argparse(self):
-        self.parser = CrispyArgumentParser(prog="screenshot", description=self.__doc__)
-        #self.parser.add_argument()
+    compatible_systems = ['darwin']
 
     def run(self, args):
-        pass
+        logger.debug("screenshot() was called.")
+        info("Capturing screen on client...")
+        success("Done. File saved to \'\'")

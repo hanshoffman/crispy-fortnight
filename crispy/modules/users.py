@@ -1,7 +1,6 @@
 import cPickle
 import logging
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -13,16 +12,12 @@ class UsersModule(CrispyModule):
 
     # can be: 'darwin', 'linux', 'windows', 'android'
     compatible_systems = ['darwin']
-    
-    #def init_argparse(self):
-    #    self.parser = CrispyArgumentParser(prog="apps", description=self.__doc__)
-    #    #self.parser.add_argument()
 
     def marshall_darwin(self):
         import os 
        
         ignore = ['.localized', 'Guest', 'Shared']
-        info = ""
+        info = "\n"
         users = os.listdir('/Users')
         for user in users:
             if user not in ignore:
@@ -42,7 +37,7 @@ class UsersModule(CrispyModule):
         if (self.is_compatible()):
             try:
                 if self.client.is_darwin():
-                    data = cPickle.dumps(self.marshall_me(), -1)
+                    data = cPickle.dumps(self.marshall_darwin(), -1)
                 if self.client.is_linux():
                     pass
                 if self.client.is_windows():

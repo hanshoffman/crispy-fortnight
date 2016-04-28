@@ -1,7 +1,6 @@
 import cPickle
 import logging
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -13,10 +12,7 @@ class AppsModule(CrispyModule):
 
     # can be: 'darwin', 'linux', 'windows', 'android'
     compatible_systems = ['darwin']
-
-    #def init_argparse(self):
-    #    self.parser = CrispyArgumentParser(prog="apps", description=self.__doc__)
-
+    
     def marshall_darwin(self):
         import os
         import plistlib
