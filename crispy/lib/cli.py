@@ -143,17 +143,20 @@ class CrispyCLI(cmd.Cmd):
 
         try:
             target = self.srv.get_client(int(pargs.session_id))
-        except Exception as e:
+        except:
             fprint.error("Improper session id.")
             return
 	
         try:
 	    mod =  self.srv.get_module(pargs.module, target) 
-	except Exception as e:
-	    fprint.error("Error loading \"%s\" module: %s" %(pargs.module, e)) 
+	except Exception as me:
+	    fprint.error("Error loading \"{}\" module: {}".format(pargs.module, me))
             return
 	
         args = "" if not pargs.arguments else pargs.arguments
+    
+        if not mod.check_args(args):
+            return
 
         try:
 	    target.run_module(mod, args) 
