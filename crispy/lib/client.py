@@ -26,7 +26,7 @@ class CrispyClient(object):
     def short_name(self):
 	""" Return string representing a CrispyConnection object (short). """
 	logger.debug("short_name() was called")
-	return "CrispyClient(id=%d, user=%s, platform=%s, hostname=%s, macaddr=%s)" %(self.desc["id"], self.desc["user"], self.desc["plat"], self.desc["hostname"], self.desc["macaddr"]) 
+	return "CrispyClient(id=%d, user=%s, platform=%s, hostname=%s, ip=%s)" %(self.desc["id"], self.desc["user"], self.desc["plat"], self.desc["hostname"], self.desc["ip"]) 
 
     def is_android(self):
         """ Determine if platform connected is an Android device. """
@@ -64,7 +64,7 @@ class CrispyClient(object):
 	""" Determine if platform connected is a *nix system. """
 	logger.debug("is_unix() was called")
 	return not self.is_windows()
-    
+
     def is_proc_arch_64_bits(self):
         """ Determine if platform connected is a 64-bit architecture. """
         logger.debug("is_proc_arch_64_bits() was called")

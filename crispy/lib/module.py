@@ -15,14 +15,14 @@ class CrispyModule(object):
     def is_compatible(self):
 	""" Override this method to define if module is compatible with the given client. """
 	if "all" in self.compatible_systems:
-	    return (True, "")
-	elif "windows" in self.compatible_systems and self.client.is_windows():
-	    return (True, "")
-	elif "linux" in self.compatible_systems and self.client.is_linux():
-	    return (True, "")
-	elif "darwin" in self.compatible_systems and self.client.is_darwin():
-	    return (True, "")
-	elif "unix" in self.compatible_systems and self.client.is_unix():
-	    return (True, "")
+	    return True
+	elif "Windows" in self.compatible_systems and self.client.is_windows():
+	    return True
+	elif "Linux" in self.compatible_systems and self.client.is_linux():
+	    return True
+	elif "Darwin" in self.compatible_systems and self.client.is_darwin():
+	    return True
+	elif "Unix" in self.compatible_systems and self.client.is_unix():
+	    return True
 	else:
-	    return (False, "This module currently only supports the following systems: %s" (','.join(self.compatible_systems)))
+	    return False 

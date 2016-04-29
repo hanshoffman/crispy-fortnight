@@ -40,6 +40,12 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 	self.clients.remove(self.get_client(id))
 	self.current_id -= 1
 
+    def remove_all(self):
+        """ Remove all clients from list. """
+        while len(self.clients) > 0:
+            client.get_session().close()
+            self.clients.remove(client)
+
     def get_client_list(self):
         """ Return a list of clients connected to the C2 server. """
 	logger.debug("get_client_list() was called")
@@ -71,10 +77,3 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 		if hasattr(module, "__class_name__"):
 		    class_name = module.__class_name__
 		return getattr(module, class_name)
-
-    def module_parse_args(self, module_name, args):
-	""" Verify validity of args passed to given module. """
-	logger.debug("module_parse_args() was called")
-	module = self.get_module(module_name) 
-	#ps = module(None, None)
-	return module.parse_args(args)

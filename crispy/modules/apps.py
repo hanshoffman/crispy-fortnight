@@ -11,7 +11,7 @@ class AppsModule(CrispyModule):
     """ Enum applications on a remote machine. """
 
     # can be: 'darwin', 'linux', 'windows', 'android'
-    compatible_systems = ['darwin']
+    compatible_systems = ['Darwin']
     
     def marshall_darwin(self):
         import os
@@ -33,25 +33,23 @@ class AppsModule(CrispyModule):
         #dpkg --get-selections #(Debian)prints WAY too many
         #ls /usr/share/applications/c
 
-    def marshall_windows(self):
-        pass
-
     def run(self, args):
-        logger.debug("apps () was called.")
+        logger.debug("apps run() was called.")
         info("Getting installed apps now...") 
+
         if (self.is_compatible()):
+            if self.client.is_darwin():
+                data = cPickle.dumps(self.marshall_darwin(), -1)
+            elif self.client.is_linux():
+                data = cPickle.dumps(self.marshall_linux(), -1) 
+            
             try:
-                if self.client.is_darwin():
-                    data = cPickle.dumps(self.marshall_darwin(), -1)
-                if self.client.is_linux():
-                    pass
-                if self.client.is_windows():
-                    pass
                 self.client.conn.sendall(data)
-                print self.client.conn.recv(1024)
-                success("Done.")
+                print self.client.conn.recv(1024).rstrip()
             except Exception as e:
-                logger.error("{}: {}".format(__class_name__, e))
+                logger.error(e)
                 error(e)
+            
+            success("Done.")
         else:
-            error("OS not implmented yet... help me code it?")
+            error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))

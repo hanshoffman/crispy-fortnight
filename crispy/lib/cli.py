@@ -79,7 +79,7 @@ class CrispyCLI(cmd.Cmd):
 	    else:
 	        if os.path.isdir(pargs.dir):
                     os.chdir(pargs.dir)
-                    fprint.success("Changed directory to {}".format(pargs.dir))
+                    fprint.success("Done.")
                 else:
 		    fprint.error("Unknown directory")
         except MyParserException as e:
@@ -93,7 +93,8 @@ class CrispyCLI(cmd.Cmd):
 	try:
 	    pargs = parser.parse_args(shlex.split(args))
 	    if pargs:
-	        print "{}\n".format(os.getcwd())
+	        print "{}".format(os.getcwd())
+                fprint.success("Done.")
 	except MyParserException as e:
             print e
 	
@@ -108,7 +109,7 @@ class CrispyCLI(cmd.Cmd):
                 print "\nDirectory listing:\n==================="
 		for f in os.listdir(os.getcwd()):
                     print "{}".format(f)
-                print ""
+            fprint.success("Done.")
         except MyParserException as e:
             print e
 
@@ -143,21 +144,23 @@ class CrispyCLI(cmd.Cmd):
 
         try:
             target = self.srv.get_client(int(pargs.session_id))
+            assert target, ""
         except:
             fprint.error("Improper session id.")
             return
 	
         try:
 	    mod =  self.srv.get_module(pargs.module, target) 
+            assert mod, ""
 	except Exception as me:
 	    fprint.error("Error loading \"{}\" module: {}".format(pargs.module, me))
             return
 	
         args = "" if not pargs.arguments else pargs.arguments
-    
+        
         if not mod.check_args(args):
             return
-
+        
         try:
 	    target.run_module(mod, args) 
         except Exception as e:
@@ -179,10 +182,10 @@ class CrispyCLI(cmd.Cmd):
 	    else:
 		if isinstance(pargs.interact, int):
 		    fprint.error("Not implemented yet")
-		    #fprint.info("Interacting w/ session %s..." %pargs.interact)
+		    #fprint.info("Interacting w/ session {}...".format(pargs.interact))
 	        elif isinstance(pargs.kill_id, int):
 		    self.srv.remove_client(self.srv.get_client(int(pargs.kill_id)).get_session())
-		    fprint.success("Killed session %s..." %pargs.kill_id)
+		    fprint.success("Killed session {}...".format(pargs.kill_id))
                 elif pargs.kill_all:
                     self.srv.remove_all()
                     fprint.success("All sessions killed.")

@@ -1,7 +1,6 @@
 import cPickle
 import logging
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -12,7 +11,7 @@ class DrivesModule(CrispyModule):
     """ Enumerate the HDD's on a remote machine. """
     
     # can be: 'darwin', 'linux', 'windows', 'android'
-    compatible_systems = ['darwin']
+    compatible_systems = ['Darwin']
 
     def marshall_darwin(self):
         import os
@@ -24,28 +23,22 @@ class DrivesModule(CrispyModule):
             info += "{}\n".format(disk)
         return info
 
-    def marshall_linux(self):
-        pass
-
-    def marshall_windows(self):
-        pass
-
     def run(self, args):
 	logger.debug("in DrivesModule run()")
+        
         if (self.is_compatible()):
+            if self.client.is_darwin():
+                data = cPickle.dumps(self.marshall_darwin(), -1)
+                
+            info("Getting partitions now...")
+            
             try:
-                if self.client.is_darwin():
-	            info("Getting Disk Partitions in \"/Volumes\" now...\n")
-                    data = cPickle.dumps(self.marshall_darwin(), -1)
-                if self.client.is_linux():
-                    pass
-                if self.client.is_windows():
-                    pass
                 self.client.conn.sendall(data)
-                print self.client.conn.recv(1024)
-                success("Done.")
+                print self.client.conn.recv(1024).rstrip()
             except Exception as e:
-                logger.error("{}: {}".format(__class_name__, e))
+                logger.error(e)
                 error(e)
+            
+            success("Done.")
         else:
-            error("OS not implmented yet... help me code it?")
+            error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))
