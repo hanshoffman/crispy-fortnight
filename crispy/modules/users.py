@@ -24,7 +24,7 @@ class UsersModule(CrispyModule):
                 info += "{}\n".format(user)
         return info
 
-    def marshall_linux(self):
+    marshall_linux = """
         import os
         import subprocess
 
@@ -34,6 +34,7 @@ class UsersModule(CrispyModule):
             info += user
         #users = subprocess.check_call(['cat', '/etc/passwd'])
         return info
+    """
 
     def run(self, args):
         logger.debug("users run() was called")
