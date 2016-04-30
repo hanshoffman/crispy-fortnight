@@ -10,25 +10,29 @@ __class_name__ = "CheckAVModule"
 class CheckAVModule(CrispyModule):
     """ Determine if and which (if any) AV is on a remote machine. """
 
-    compatible_systems = ['darwin']
+    compatible_systems = ['all']
 
     def marshall_me(self):
         import os
        
-        avast = {'name':'Avast', 'files':['test'], 'dirs':['test'], 'procs':[]}
-        avg = {'name':'AVG', 'files':['test'], 'dirs':['test'], 'procs':[]}
-        bitdefender = {'name':'Bit Defender', 'files':['test'], 'dirs':['test'], 'procs':[]}
-        comodo = {'name':'Comodo', 'files':['test'], 'dirs':['test'], 'procs':[]}
+        adaware = {'name':'Ad Aware', 'binaries':['Ad-Aware.exe'], 'dirs':['test'], 'procs':[]}
+        avast = {'name':'Avast', 'binaries':['test'], 'dirs':['test'], 'procs':[]} #windows, darwin, android, ios
+        avg = {'name':'AVG', 'binaries':['test'], 'dirs':['test'], 'procs':[]}
+        bitdefender = {'name':'BitDefender', 'binaries':['test'], 'dirs':['test'], 'procs':[]}
+        comodo = {'name':'Comodo', 'binaries':['test'], 'dirs':['test'], 'procs':[]}
+        malwarebytes = {'name':'Malware Bytes', 'binaries':['test'], 'dirs':['test'], 'procs':[]}
+        panda = {'name':'Panda Cloud', 'binaries':['test'], 'dirs':['test'], 'procs':[]}
         sophos = {'name':'Sophos AV', 
-                'files':['/usr/local/bin/sweep'], 
+                'binaries':['/usr/local/bin/sweep'], 
                 'dirs':['/Applications/Sophos Anti-Virus.app'], 
                 'procs':['SophosScanD', 'SophosWebIntelligence']}
-        av_list = [avast, avg, bitdefender, comodo, sophos]
+        zonealarm = {'name':'Zone Alarm', 'binaries':['zonealarm.exe', 'zapro.exe'], 'dirs':['test'], 'procs':[]}
+        av_list = [adaware, avast, avg, bitdefender, comodo, malwarebytes, panda, sophos, zonealarm]
 
         info = "\n"
-        for av in av_list:
+        for av in av_list: #may need to do a dirwalk so I don't have to give paths to the files// or use psutil process list output to search for binaries
             fCount = dCount = pCount = 0
-            for sf in av['files']:
+            for sf in av['binaries']:
                 if os.path.isfile(sf):
                     fCount += 1
             for sd in av['dirs']:

