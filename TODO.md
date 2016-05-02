@@ -4,8 +4,6 @@
 	-https://www.youtube.com/watch?v=og9-X4xIxoQ (windows)
 -set up tab completion
 	-https://docs.python.org/2/tutorial/interactive.html
--add controller functionality to keep control of ALL sessions connected to it
-	-be able to switch between sessions
 -add shell functionality
 -add client/server authentication using ssl (rsa keys)
 -create implant executable using pyinstaller
@@ -20,3 +18,5 @@ Done:
 -add AES-256
 -add reverse connection instead of just bind
 -set up code to work with "modules"
+-add controller functionality to keep control of ALL sessions connected to it
+	-be able to switch between sessions

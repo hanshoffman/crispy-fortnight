@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 __class_name__ = "CheckAVModule"
 class CheckAVModule(CrispyModule):
-    """ Determine if and which (if any) AV is on a remote machine. """
+    """ Determine which (if any) AV is on a remote machine. """
 
     compatible_systems = ['all']
 

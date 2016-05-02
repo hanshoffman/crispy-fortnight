@@ -3,16 +3,16 @@ color_stop = "\033[0m"
 
 def error(msg):
     """ Return a formatted error line to stdout. """
-    print "{}[!] {}{}".format(colors["red"], msg, color_stop)
+    print "\n{}[!] {}{}".format(colors["red"], msg, color_stop)
 
 def info(msg):
     """ Return a formatted info line to stdout. """
-    print "{}[*] {}{}".format(colors["gray"], msg, color_stop)
+    print "\n{}[*] {}{}".format(colors["gray"], msg, color_stop)
 
 def success(msg):
     """ Return a formatted success line to stdout. """
-    print "{}[+] {}{}".format(colors["green"], msg, color_stop)
+    print "\n{}[+] {}{}".format(colors["green"], msg, color_stop)
 
 def warning(msg):
     """ Return a formatted warning line to stdout. """
-    print "{}[-] {}{}".format(colors["yellow"], msg, color_stop)
+    print "\n{}[-] {}{}".format(colors["yellow"], msg, color_stop)

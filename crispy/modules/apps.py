@@ -1,4 +1,3 @@
-import cPickle
 import logging
 
 from crispy.lib.module import *
@@ -10,7 +9,7 @@ __class_name__ = "AppsModule"
 class AppsModule(CrispyModule):
     """ Enum applications on a remote machine. """
 
-    # can be: 'darwin', 'linux', 'windows', 'android'
+    # can be: 'Darwin', 'Linux', 'Windows', 'Android'
     compatible_systems = ['Darwin']
     
     def marshall_darwin(self):
@@ -39,13 +38,12 @@ class AppsModule(CrispyModule):
 
         if (self.is_compatible()):
             if self.client.is_darwin():
-                data = cPickle.dumps(self.marshall_darwin(), -1)
+                pass
             elif self.client.is_linux():
-                data = cPickle.dumps(self.marshall_linux(), -1) 
+                pass
             
             try:
-                self.client.conn.sendall(data)
-                print self.client.conn.recv(1024).rstrip()
+                pass
             except Exception as e:
                 logger.error(e)
                 error(e)

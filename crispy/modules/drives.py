@@ -8,7 +8,7 @@ logger = logging.getLogger(__name__)
 
 __class_name__ = "DrivesModule"
 class DrivesModule(CrispyModule):
-    """ Enumerate the HDD's on a remote machine. """
+    """ Enumerate the drives/mounts on a remote machine. """
     
     # can be: 'darwin', 'linux', 'windows', 'android'
     compatible_systems = ['Darwin']
