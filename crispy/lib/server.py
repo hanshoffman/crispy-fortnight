@@ -138,10 +138,9 @@ class CrispyServer(threading.Thread):
         logger.debug("remove_client_id(id) was called")
         
         with self.clients_lock:
-            conn = self.get_client(id)
-            conn.close()
-            #self.clients.remove(self.get_client(id))
-            self.clients.remove(conn)
+            client = self.get_client(id)
+            client.close()
+            self.clients.remove(client)
 
     def remove_all(self):
         """ Remove all clients from list. """
@@ -162,7 +161,7 @@ class CrispyServer(threading.Thread):
         logger.debug("get_client(id) was called")
         
         for client in self.clients:
-            if client.get_id() == id:
+            if client.desc['id'] == id:
                 return client
 
     def get_module_list(self):
@@ -174,7 +173,7 @@ class CrispyServer(threading.Thread):
 
     def get_module(self, name):
         """ Return a module by name. """
-        logger.debug("get_module() was called")
+        logger.debug("get_module(name) was called")
         
         for module_loader, module_name, ispkg in pkgutil.iter_modules(crispy.modules.__path__):
             if module_name == name:
@@ -185,7 +184,7 @@ class CrispyServer(threading.Thread):
                     class_name = module.__class_name__
                 
                 return getattr(module, class_name)
-    
+
     def run(self):
         try:
             self.srv = RPyCServer(CrispyService, hostname=self.addr, port=self.port)

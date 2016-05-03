@@ -151,29 +151,28 @@ class CrispyCLI(cmd.Cmd):
             print e
             return
 
-        try:
-            target = self.srv.get_client(int(pargs.session_id))
-            assert target, ""
-        except:
-            fprint.error("Improper session id.")
+        target = self.srv.get_client(int(pargs.session_id))
+        if not target:
+            fprint.error("No sessions connected.")
             return
-	
+
         try:
-            mod =  self.srv.get_module(pargs.module, target)
-            assert mod, ""
+            mod =  self.srv.get_module(pargs.module)(target)
         except Exception as me:
             fprint.error("Error loading \"{}\" module: {}".format(pargs.module, me))
             return
-	
-        args = "" if not pargs.arguments else pargs.arguments
-        
-        if not mod.check_args(args):
-            return
-        
+
         try:
-            target.run_module(mod, args)
+            margs = mod.check_args(pargs.arguments)
+        except MyParserException as e:
+            print e
+            return
+
+        try:
+            target.run_module(mod, margs)
         except Exception as e:
-            fprint.error(e)
+            fprint.error("Error running module: {}".format(e))
+            return
 
     def do_sessions(self, args):
         """ Active session manipulation and interaction. """

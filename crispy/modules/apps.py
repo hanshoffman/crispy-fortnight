@@ -12,6 +12,11 @@ class AppsModule(CrispyModule):
     # can be: 'Darwin', 'Linux', 'Windows', 'Android'
     compatible_systems = ['Darwin']
     
+    def check_args(self, args):
+        self.parser = CrispyArgumentParser(prog="download", description=self.__doc__)
+        
+        return self.parser.parse_args(args)
+
     def marshall_darwin(self):
         import os
         import plistlib
@@ -27,13 +32,8 @@ class AppsModule(CrispyModule):
                     info += "{}\n".format(app[:-4])
         return info
 
-    def marshall_linux(self):
-        import os
-        #dpkg --get-selections #(Debian)prints WAY too many
-        #ls /usr/share/applications/c
-
     def run(self, args):
-        logger.debug("apps run() was called.")
+        logger.debug("run(args) was called.")
         info("Getting installed apps now...") 
 
         if (self.is_compatible()):

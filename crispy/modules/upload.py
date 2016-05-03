@@ -1,8 +1,7 @@
-import cPickle
 import logging
-import os
 
 from crispy.lib.myparser import CrispyArgumentParser
+from rpyc.utils.classic import upload
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -15,31 +14,20 @@ class UploadModule(CrispyModule):
     compatible_systems = ['all']
 
     def check_args(self, args):
-        self.parser = CrispyArgumentParser(prog="run upload", description=self.__doc__)
+        self.parser = CrispyArgumentParser(prog="upload", description=self.__doc__)
         self.parser.add_argument("local_file", metavar="<local_path>", type=str)
         self.parser.add_argument("remote_file", metavar="<remote_path>", nargs="?", type=str)
-    
-        try:
-            pargs = self.parser.parse_args(args)
-        except Exception as e:
-            print e
-            return False
-
-        return True
-
-    def remote_file_check(self, f):
-        import os
-
-        return "1" if os.path.isfile(f) else "0"
+   
+        return self.parser.parse_args(args)
 
     def run(self, args):
-        if os.path.isfile(args[0]):
-            try:
-                info("Attempting upload of %s ..." %local_file)
-                success("File transfer complete.")
-                logger.info("File transfer complete.")
-            except:
-                error("File transfer failed.")
-                logger.error("File transfer failed.")
-        else:
-            error("\"{}\" does not exist locally.".format(args[0]))
+        logger.debug("run(args) was called.")
+        info("Attempting upload of {}...".format(args.local_file))
+        
+        try: 
+            upload(self.client.conn, args.local_file, args.remote_file)
+            success("File transfer complete.")
+            logger.info("File transfer complete.")
+        except Exception as e:
+            error("File transfer failed.")
+            logger.error("File transfer failed.")
