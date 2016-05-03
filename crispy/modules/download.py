@@ -17,7 +17,7 @@ class DownloadModule(CrispyModule):
     def check_args(self, args):
         self.parser = CrispyArgumentParser(prog="download", description=self.__doc__)
         self.parser.add_argument("remote_file", metavar="<remote_path>", type=str)
-	self.parser.add_argument("local_file", metavar="<local_path>", nargs="?", type=str)
+	self.parser.add_argument("local_file", metavar="<local_path>", type=str)
         
         return self.parser.parse_args(args) 
 
@@ -25,15 +25,17 @@ class DownloadModule(CrispyModule):
         logger.debug("run(args) was called.")
 
         if os.path.isfile(args.local_file):
-            warning("\"{}\" already exists locally and will be overwritten. Please re-run the command to continue.".format(args.local_file))
+            warning("\"{}\" already exists locally.".format(args.local_file))
         else:
-            logger.info("Downloading file now...")
-	    info("Attempting download of {}...".format(args.remote_file))
+            logger.info("Attempting to download file...")
+	    info("Attempting to download file...")
+            print self.client.conn.modules
+            #download(self.client.conn, args.remote_file, args.local_file)
 
-            #remote_file = self.client.conn.modules['os.path'].expandvars(args[0])
+            #remote_file = self.client.conn.modules['os.path'].expandvars(args.remote_file)
             #if remote_file:
-            #    download(self.client.conn, remote_file, ar
+            #    download(self.client.conn, args.remote_file, args.local_file)
             #    logger.info("File transfer complete.")
             #    success("File transfer complete.")
             #else:
-            #    error("\"{}\" does not exist remotely.".format(args[0]))
+            #    error("\"{}\" does not exist remotely.".format(args.remote_file))
