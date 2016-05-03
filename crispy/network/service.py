@@ -26,6 +26,7 @@ class CrispyService(rpyc.Service):
                 instantiate_custom_exceptions = False,
                 instantiate_oldstyle_exceptions = False,
             ))
+            self.modules = None
             self.builtin = None
             self.builtins = None
             self.eval = self._conn.root.eval
@@ -34,7 +35,6 @@ class CrispyService(rpyc.Service):
             self.exposed_stdin = sys.stdin
             self.exposed_stdout = sys.stdout
             self.exposed_stderr = sys.stderr
-            self.modules = None
             self.namespace = self._conn.root.namespace
             
             self.srv.add_client(self)
