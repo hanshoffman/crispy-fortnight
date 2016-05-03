@@ -27,6 +27,7 @@ class CrispyService(rpyc.Service):
                 instantiate_oldstyle_exceptions = False,
             ))
             self.builtin = None
+            self.builtins = None
             self.eval = self._conn.root.eval
             self.execute = self._conn.root.execute
             self.exit = self._conn.root.exit
@@ -35,7 +36,7 @@ class CrispyService(rpyc.Service):
             self.exposed_stderr = sys.stderr
             self.modules = None
             self.namespace = self._conn.root.namespace
-
+            
             self.srv.add_client(self)
         except Exception as e:
             error(e)
@@ -46,7 +47,7 @@ class CrispyService(rpyc.Service):
         self.srv.remove_client(self)
 
     def exposed_set_modules(self, modules):
-        logger.debug("set_modules() was called")
-
+        logger.debug("set_modules(modules) was called")
         self.modules = modules
         self.builtin = self.modules.__builtin__
+        self.builtins = self.modules.__builtin__
