@@ -26,7 +26,7 @@ class CrispyService(rpyc.Service):
                 instantiate_custom_exceptions = False,
                 instantiate_oldstyle_exceptions = False,
             ))
-
+            self.builtin = None
             self.eval = self._conn.root.eval
             self.execute = self._conn.root.execute
             self.exit = self._conn.root.exit
@@ -49,3 +49,4 @@ class CrispyService(rpyc.Service):
         logger.debug("set_modules() was called")
 
         self.modules = modules
+        self.builtin = self.modules.__builtin__
