@@ -129,7 +129,7 @@ class CrispyServer(threading.Thread):
         
         with self.clients_lock:
             for index, client in enumerate(self.clients):
-                if client.get_session() is conn:
+                if client.conn is conn:
                     del self.clients[index]
                     break
 
@@ -139,16 +139,7 @@ class CrispyServer(threading.Thread):
         
         with self.clients_lock:
             client = self.get_client(id)
-            client.close()
             self.clients.remove(client)
-
-    def remove_all(self):
-        """ Remove all clients from list. """
-        logger.debug("remove_all() was called")
-        
-        with self.clients_lock:
-            for index, client in enumerate(self.clients):
-                del self.clients[index]
 
     def get_client_list(self):
         """ Return a list of clients connected to the C2 server. """

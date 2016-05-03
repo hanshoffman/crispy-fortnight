@@ -194,9 +194,8 @@ class CrispyCLI(cmd.Cmd):
                     fprint.error("Not implemented yet")
                     #fprint.info("Interacting w/ session {}...".format(pargs.interact))
                 elif isinstance(pargs.kill_id, int):
-                    client = self.srv.get_client(int(pargs.kill_id))
                     try:
-                        client.conn.exit()
+                        self.srv.remove_client_id(self.srv.get_client(int(pargs.kill_id)))
                         fprint.success("Killed session {}...".format(pargs.kill_id))
                     except:
                         pass
@@ -204,7 +203,10 @@ class CrispyCLI(cmd.Cmd):
                     if not self.srv.clients:
                         fprint.info("There are no sessions to kill.")
                     else:
-                        self.srv.remove_all()
+                        fprint.info("Still implementing")
+                        #for client in self.srv.get_client_list():
+                        #    client.conn.exit()
+
                         fprint.success("All sessions killed.")
                 elif pargs.list:
                     if not self.srv.clients:
