@@ -29,13 +29,12 @@ class DownloadModule(CrispyModule):
         else:
             logger.info("Attempting to download file...")
 	    info("Attempting to download file...")
-            print self.client.conn.modules
-            #download(self.client.conn, args.remote_file, args.local_file)
+            
+            try:
+                download(self.client.conn, args.remote_file, args.local_file)
+                logger.info("File transfer complete.")
+                success("File transfer complete.")
+            except ValueError as e:
+                error("Cannot download file")
 
             #remote_file = self.client.conn.modules['os.path'].expandvars(args.remote_file)
-            #if remote_file:
-            #    download(self.client.conn, args.remote_file, args.local_file)
-            #    logger.info("File transfer complete.")
-            #    success("File transfer complete.")
-            #else:
-            #    error("\"{}\" does not exist remotely.".format(args.remote_file))
