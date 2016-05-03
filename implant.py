@@ -1,3 +1,4 @@
+import os
 import sys
 
 from rpyc.core.service import Service, ModuleNamespace
