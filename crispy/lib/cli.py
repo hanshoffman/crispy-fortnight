@@ -8,6 +8,7 @@ import os
 import shlex
 import subprocess
 
+from rpyc.utils.classic import interact
 from crispy import __release_date__
 from crispy import __version__
 from .. modules import *
@@ -151,7 +152,12 @@ class CrispyCLI(cmd.Cmd):
             print e
             return
 
-        target = self.srv.get_client(int(pargs.session_id))
+        try:
+            target = self.srv.get_client(int(pargs.session_id))
+        except Exception as e:
+            fprint.error("Session id should be an integer.")
+            return
+
         if not target:
             fprint.error("No sessions connected.")
             return
@@ -191,8 +197,9 @@ class CrispyCLI(cmd.Cmd):
                 return
             else:
                 if isinstance(pargs.interact, int):
-                    fprint.error("Not implemented yet")
-                    #fprint.info("Interacting w/ session {}...".format(pargs.interact))
+                    fprint.info("Interacting w/ session {}...".format(pargs.interact))
+                    client = self.srv.get_client(int(pargs.interact))
+                    interact(client['conn'])
                 elif isinstance(pargs.kill_id, int):
                     try:
                         self.srv.remove_client_id(self.srv.get_client(int(pargs.kill_id)))
