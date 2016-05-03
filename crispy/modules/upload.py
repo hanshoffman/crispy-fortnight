@@ -21,13 +21,13 @@ class UploadModule(CrispyModule):
         return self.parser.parse_args(args)
 
     def run(self, args):
-        logger.debug("run(args) was called.")
+        logger.debug("run(args) was called")
         info("Attempting to upload file...")
        
         try:
             upload(self.client.conn, args.local_file, args.remote_file)
             success("File transfer complete.")
             logger.info("File transfer complete.")
-        except Exception as e:
-            error("File transfer failed: {}".format(e))
+        except ValueError as e:
+            error(e)
             logger.error("File transfer failed.")
