@@ -1,4 +1,3 @@
-import cPickle
 import logging
 
 from crispy.lib.myparser import CrispyArgumentParser
@@ -11,30 +10,20 @@ __class_name__ = "PrintersModule"
 class PrintersModule(CrispyModule):
     """ Enum printers on a remote machine. """
 
-    # can be: 'darwin', 'nt', 'android'
-    compatible_systems = ['darwin']
-
-    #def init_argparse(self):
-    #    self.parser = CrispyArgumentParser(prog="printers", description=self.__doc__)
-    #    self.parser.add_argument()
-
-    def marshall_me(self):
-        import os
-        
-        info = "\n"
-        printers = os.listdir('/private/etc/cups/ppd/')
-        for printer in printers:
-            info += "{}\n".format(printer[:-4])
-        return info
+    # can be: 'Darwin', 'Windows', 'Linux', 'Android'
+    compatible_systems = ['Darwin']
 
     def run(self, args):
         logger.debug("apps () was called.")
         info("Getting installed printers now...")
+
         if (self.is_compatible()):
+            print "\nInstalled printers:\n==================="
             try:
-                data = cPickle.dumps(self.marshall_me(), -1)
-                self.client.conn.sendall(data)
-                print self.client.conn.recv(1024)
+                if self.client.is_darwin():
+                    printers = self.client.conn.modules['os'].listdir('/private/etc/cups/ppd/')    
+                    for p in printers:
+                        print "{}\n".format(p[:-4])
                 success("Done.")
             except Exception as e:
                 logger.error("{}: {}".format(__class_name__, e))

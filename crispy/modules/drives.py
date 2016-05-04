@@ -1,4 +1,3 @@
-import cPickle
 import logging
 
 from crispy.lib.module import *
@@ -10,7 +9,7 @@ __class_name__ = "DrivesModule"
 class DrivesModule(CrispyModule):
     """ Enumerate the drives/mounts on a remote machine. """
     
-    # can be: 'darwin', 'linux', 'windows', 'android'
+    # can be: 'Darwin', 'Linux', 'Windows', 'Android'
     compatible_systems = ['Darwin']
 
     def marshall_darwin(self):
@@ -24,17 +23,15 @@ class DrivesModule(CrispyModule):
         return info
 
     def run(self, args):
-	logger.debug("in DrivesModule run()")
+	logger.debug("run(args) was called")
+        info("Getting partitions now...")
         
         if (self.is_compatible()):
-            if self.client.is_darwin():
-                data = cPickle.dumps(self.marshall_darwin(), -1)
-                
-            info("Getting partitions now...")
-            
             try:
-                self.client.conn.sendall(data)
-                print self.client.conn.recv(1024).rstrip()
+                if self.client.is_darwin():
+                    drives = self.client.conn.modules['os'].listdir('/Volumes')
+                    for d in drives:
+                        print "{}\n".format(d)
             except Exception as e:
                 logger.error(e)
                 error(e)

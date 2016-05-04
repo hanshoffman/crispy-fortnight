@@ -187,7 +187,6 @@ class CrispyCLI(cmd.Cmd):
         parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
         parser.add_argument("-i", dest="interact", help="pop a shell on the given session", metavar="<session_id>", type=int)
         parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
-        parser.add_argument("-K", action="store_true", dest="kill_all", help="kill all connected sessions")
         parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
         
         try:
@@ -210,15 +209,6 @@ class CrispyCLI(cmd.Cmd):
                             pass
                     else:
                         fprint.warning("No session with id: {}".format(pargs.kill_id))
-                elif pargs.kill_all:
-                    if not self.srv.get_client_list():
-                        fprint.warning("There are no sessions to kill.")
-                    else:
-                        for client in self.srv.get_client_list():
-                            try:
-                                client.conn.exit()
-                            except:
-                                pass
                 elif pargs.list:
                     if not self.srv.get_client_list():
                         fprint.info("There are no active sessions.")

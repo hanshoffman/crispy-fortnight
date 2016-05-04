@@ -135,14 +135,6 @@ class CrispyServer(threading.Thread):
                     del self.clients[index]
                     break
 
-    def remove_client_id(self, id):
-        """ Remove client given an id from client list. """
-        logger.debug("remove_client_id(id) was called")
-        
-        with self.clients_lock:
-            client = self.get_client(id)
-            self.clients.remove(client)
-
     def get_client_list(self):
         """ Return a list of clients connected to the C2 server. """
         logger.debug("get_client_list() was called")
@@ -179,6 +171,9 @@ class CrispyServer(threading.Thread):
                 return getattr(module, class_name)
 
     def run(self):
+        """ Server method that creates and starts the RPyC server. """
+        logger.debug("run() was called")
+
         try:
             self.srv = RPyCServer(CrispyService, hostname=self.addr, port=self.port)
             self.srv.start()

@@ -36,5 +36,3 @@ class DownloadModule(CrispyModule):
                 success("File transfer complete.")
             except ValueError as e:
                 error("Cannot download file")
-
-            #remote_file = self.client.conn.modules['os.path'].expandvars(args.remote_file)

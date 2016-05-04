@@ -12,38 +12,22 @@ class AppsModule(CrispyModule):
     # can be: 'Darwin', 'Linux', 'Windows', 'Android'
     compatible_systems = ['Darwin']
     
-    def check_args(self, args):
-        self.parser = CrispyArgumentParser(prog="download", description=self.__doc__)
-        
-        return self.parser.parse_args(args)
-
-    def marshall_darwin(self):
-        import os
-        import plistlib
-
-        info = "\n"
-        apps = os.listdir('/Applications')
-        for app in apps:
-            if app.endswith(".app"):
-                try:
-                    pl = plistlib.readPlist('/Applications/' + app + '/Contents/Info.plist')
-                    info += "{} {}\n".format(app[:-4], pl["CFBundleShortVersionString"])
-                except:
-                    info += "{}\n".format(app[:-4])
-        return info
-
     def run(self, args):
-        logger.debug("run(args) was called.")
+        logger.debug("run(args) was called")
         info("Getting installed apps now...") 
 
         if (self.is_compatible()):
-            if self.client.is_darwin():
-                pass
-            elif self.client.is_linux():
-                pass
-            
+            print "\nInstalled applications:\n==================="
+
             try:
-                pass
+                if self.client.is_darwin():
+                    apps = self.client.conn.modules['os'].listdir('/Applications') #what if I just do a dirwalk in /Apps..???
+                    
+                    try:
+                        pl = plistlib.readPlist('/Applications/' + app + '/Contents/Info.plist')
+                        print "{} {}\n".format(app[:-4], pl["CFBundleShortVersionString"])
+                    except:
+                        print "{}\n".format(app[:-4])
             except Exception as e:
                 logger.error(e)
                 error(e)
