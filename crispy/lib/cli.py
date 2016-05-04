@@ -198,25 +198,29 @@ class CrispyCLI(cmd.Cmd):
             else:
                 if isinstance(pargs.interact, int):
                     fprint.info("Interacting w/ session {}...".format(pargs.interact))
-                    client = self.srv.get_client(int(pargs.interact))
-                    interact(client['conn'])
+                    client = self.srv.get_client(pargs.interact)
+                    interact(client.conn)
                 elif isinstance(pargs.kill_id, int):
-                    try:
-                        self.srv.remove_client_id(self.srv.get_client(int(pargs.kill_id)))
-                        fprint.success("Killed session {}...".format(pargs.kill_id))
-                    except:
-                        pass
-                elif pargs.kill_all:
-                    if not self.srv.clients:
-                        fprint.info("There are no sessions to kill.")
+                    client = self.srv.get_client(pargs.kill_id)
+                        
+                    if client:
+                        try:
+                            client.conn.exit()
+                        except:
+                            pass
                     else:
-                        fprint.info("Still implementing")
-                        #for client in self.srv.get_client_list():
-                        #    client.conn.exit()
-
-                        fprint.success("All sessions killed.")
+                        fprint.warning("No session with id: {}".format(pargs.kill_id))
+                elif pargs.kill_all:
+                    if not self.srv.get_client_list():
+                        fprint.warning("There are no sessions to kill.")
+                    else:
+                        for client in self.srv.get_client_list():
+                            try:
+                                client.conn.exit()
+                            except:
+                                pass
                 elif pargs.list:
-                    if not self.srv.clients:
+                    if not self.srv.get_client_list():
                         fprint.info("There are no active sessions.")
                     else:
                         print "\nActive sessions:\n==================="

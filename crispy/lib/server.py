@@ -10,6 +10,7 @@ logger = logging.getLogger(__name__)
 from .. network.server_type import RPyCServer
 from .. network.service import CrispyService
 from . client import CrispyClient
+from .. lib.fprint import *
 
 class CrispyServer(threading.Thread):
     """ Backend server methods for clients. """
@@ -130,6 +131,7 @@ class CrispyServer(threading.Thread):
         with self.clients_lock:
             for index, client in enumerate(self.clients):
                 if client.conn is conn:
+                    success("Session {} closed.".format(client.desc['id']))
                     del self.clients[index]
                     break
 

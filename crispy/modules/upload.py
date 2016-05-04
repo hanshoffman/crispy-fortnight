@@ -29,5 +29,5 @@ class UploadModule(CrispyModule):
             success("File transfer complete.")
             logger.info("File transfer complete.")
         except ValueError as e:
-            error(e)
+            error("Cannot upload file")
             logger.error("File transfer failed.")
