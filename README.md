@@ -1,5 +1,5 @@
 # crispy-fortnight
-Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions. 
+Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to learn Python, understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions. 
  
 ## How to run things
 Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "tail -f crispy.log" to follow the log file on the server.
@@ -10,6 +10,9 @@ Shoutouts to people who have helped along the way either directly or indirectly.
 <br>-Thanks to @jchristman for all the bug fixes and commits!
 <br>-Thanks to @bts0 for the AES code.
 <br>-Thanks to @WesleyThurner for the apps module code with versioning on mac!
+<br>-Thanks to @n1nj4sec for rpyc, cmd.Cmd and a few other examples in his similar and far superior Python RAT. After numerous attempts of mine to avoid using RPC, I came across this code when trying to find good examples on the R
+PyC library. I ended up modeling a large portion of my code after his. "good artists copy; great artists steal (Pablo Picasso)" https://github.com/n1nj4sec/pupy
+<br>-RPyC creator @tomerfiliba https://github.com/tomerfiliba/rpyc
 
 ## Implemented modules
 <br>[x] upload - transfer a file to the remote client
