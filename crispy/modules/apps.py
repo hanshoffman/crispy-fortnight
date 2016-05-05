@@ -21,14 +21,14 @@ class AppsModule(CrispyModule):
 
             try:
                 if self.client.is_darwin():
-                    apps = self.client.conn.modules['os'].listdir('/Applications') #what if I just do a dirwalk in /Apps..???
+                    apps = self.client.conn.modules['os'].listdir('/Applications') 
                     for app in apps:
-                        if app.endswith(".app"): # Ignores sub directories; if you comment this out you get subs and files in list
+                        if app.endswith(".app"): 
                             try:
                                 pl = self.client.conn.modules['plistlib'].readPlist('/Applications/' + app + '/Contents/Info.plist')
-                                print app + " " + pl["CFBundleShortVersionString"]
+                                print app[:-4] + " " + pl["CFBundleShortVersionString"]
                             except:
-                                print app + " No version in plist"
+                                print app[:-4] + " [No version in plist]"
             except Exception as e:
                 logger.error(e)
                 error(e)

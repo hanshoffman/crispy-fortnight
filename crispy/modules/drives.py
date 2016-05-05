@@ -7,35 +7,38 @@ logger = logging.getLogger(__name__)
 
 __class_name__ = "DrivesModule"
 class DrivesModule(CrispyModule):
-    """ Enumerate the drives/mounts on a remote machine. """
+    """ Enumerate all mounted disk partitions on a remote machine. """
     
-    # can be: 'Darwin', 'Linux', 'Windows', 'Android'
-    compatible_systems = ['Darwin']
+    compatible_systems = ['all']
 
-    def marshall_darwin(self):
-        import os
-
-        partitions = os.listdir('/Volumes')
+    def bytes2human(self, n):
+        symbols = ('K', 'M', 'G', 'T', 'P', 'E', 'Z', 'Y')
+        prefix = {}
         
-        info = ""
-        for disk in partitions:
-            info += "{}\n".format(disk)
-        return info
+        for i, s in enumerate(symbols):
+            prefix[s] = 1 << (i + 1) * 10
+        
+        for s in reversed(symbols):
+            if n >= prefix[s]:
+                value = float(n) / prefix[s]
+                return '%.1f%s' % (value, s)
+        
+        return "%sB" % n
 
+    #https://github.com/giampaolo/psutil/blob/master/scripts/disk_usage.py (use this code!)
     def run(self, args):
 	logger.debug("run(args) was called")
-        info("Getting partitions now...")
         
-        if (self.is_compatible()):
-            try:
-                if self.client.is_darwin():
-                    drives = self.client.conn.modules['os'].listdir('/Volumes')
-                    for d in drives:
-                        print "{}\n".format(d)
-            except Exception as e:
-                logger.error(e)
-                error(e)
-            
+        spacing = "%-17s %8s %8s %8s %5s%% %9s  %s"
+        print spacing % (("\nDevice", "Total", "Used", "Free", "Use ", "Type", "Mount"))
+        try:
+            for part in self.client.conn.modules['psutil'].disk_partitions():
+                if self.client.is_windows():
+                    if 'cdrom' in part.opts or part.fstype == '':
+                        continue
+                usage = self.client.conn.modules['psutil'].disk_usage(part.mountpoint)
+                print spacing % (part.device, self.bytes2human(usage.total), self.bytes2human(usage.used), self.bytes2human(usage.free), int(usage.percent), part.fstype, part.mountpoint)
             success("Done.")
-        else:
-            error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))
+        except Exception as e:
+            logger.error(e)
+            error(e)
