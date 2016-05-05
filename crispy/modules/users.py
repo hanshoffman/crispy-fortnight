@@ -20,8 +20,8 @@ class UsersModule(CrispyModule):
         #http://stackoverflow.com/questions/421618/python-script-to-list-users-and-groups
         #format like drives.py
         if (self.is_compatible()):
-            spacing = "%-8s %15s %8s %8s %12s %12s"
-            print spacing % (("\nName", "Full Name", "UID", "GID", "Home", "Shell"))
+            spacing = "%-15s %-20s %8s %8s %15s %10s"
+            print spacing % (("\nUsername", "Full Name", "UID", "GID", "Home", "Shell"))
             
             try:
                 if self.client.is_darwin():
