@@ -14,18 +14,21 @@ class UsersModule(CrispyModule):
 
     def run(self, args):
         logger.debug("users run() was called")
-        info("Getting system users now...")
-
+        
+        #https://docs.python.org/2/library/grp.html
+        #https://docs.python.org/2/library/pwd.html#module-pwd
+        #http://stackoverflow.com/questions/421618/python-script-to-list-users-and-groups
+        #format like drives.py
         if (self.is_compatible()):
-            print "\nSystem Users:\n==================="
+            print "\nUsers:\n==================="
             try:
                 if self.client.is_darwin():
                     users = self.client.conn.modules['os'].listdir('/Users')
-                elif self.client.is_linux():
-                    users = self.client.conn.modules['os'].listdir('/home')
-
-                for u in users:
-                    print "{}\n".format(u)
+                elif self.client.is_unix():
+                    for user in self.client.conn.modules['pwd'].getpwall():
+                        #useradd man pages claims that users w/ gid 0-999 are typically reserved for system accounts
+                        if user[2] == 0 or (user[2] > 999 and "nologin" not in user[6]):
+                            print user
             except Exception as e:
                 logger.error(e)
                 error(e)
