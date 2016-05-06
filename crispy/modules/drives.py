@@ -29,15 +29,15 @@ class DrivesModule(CrispyModule):
     def run(self, args):
 	logger.debug("run(args) was called")
         
-        spacing = "%-17s %8s %8s %8s %5s%% %9s  %s"
-        print spacing % (("\nDevice", "Total", "Used", "Free", "Use ", "Type", "Mount"))
+        spacing = "{:15}{:12}{:12}{:12}{:<12}{:12}{:12}"
+        print spacing.format("Device", "Total", "Used", "Free", "% Used", "Type", "Mount")
         try:
             for part in self.client.conn.modules['psutil'].disk_partitions():
                 if self.client.is_windows():
                     if 'cdrom' in part.opts or part.fstype == '':
                         continue
                 usage = self.client.conn.modules['psutil'].disk_usage(part.mountpoint)
-                print spacing % (part.device, self.bytes2human(usage.total), self.bytes2human(usage.used), self.bytes2human(usage.free), int(usage.percent), part.fstype, part.mountpoint)
+                print spacing.format(part.device, self.bytes2human(usage.total), self.bytes2human(usage.used), self.bytes2human(usage.free), int(usage.percent), part.fstype, part.mountpoint)
             success("Done.")
         except Exception as e:
             logger.error(e)
