@@ -1,6 +1,6 @@
 import logging
 
-from psutil import AccessDenied, Error, STATUS_ZOMBIE
+from psutil import AccessDenied
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
