@@ -14,20 +14,23 @@ class PSModule(CrispyModule):
 
     def run(self, args):
         logger.debug("run(args) was called")
-        info("Getting process list now...")
 
         if (self.is_compatible()):
-            print "\nCurrent Process List\n==================="
+            spacing = "{:<5}{:<15}"
+            print spacing.format("PID", "Name")
 
+            cpid = self.client.conn.modules['os'].getpid()
             try:
 #                if self.client.is_darwin():
                     for proc in self.client.conn.modules['psutil'].process_iter():
                         try:
-                            pids = proc.as_dict(attrs=['pid', 'name'])
+                            pid = proc.as_dict(attrs=['pid', 'name'])
                         except psutil.NoSuchProcess:
                             pass
+                        if pid['pid'] == cpid:
+                            highlight(spacing.format(pid['pid'], pid['name']), "yellow")
                         else:
-                            print(pids)
+                            print spacing.format(pid['pid'], pid['name'])
             except Exception as e:
                 logger.error(e)
                 error(e)
