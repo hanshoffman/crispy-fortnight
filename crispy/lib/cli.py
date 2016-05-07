@@ -159,7 +159,7 @@ class CrispyCLI(cmd.Cmd):
             return
 
         if not target:
-            fprint.error("No sessions connected.")
+            fprint.error("Improper session id.")
             return
 
         try:
