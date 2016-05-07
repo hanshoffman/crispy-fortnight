@@ -1,6 +1,5 @@
 import logging
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -11,11 +10,10 @@ class PrintersModule(CrispyModule):
     """ Enum printers on a remote machine. """
 
     # can be: 'Darwin', 'Windows', 'Linux', 'Android'
-    compatible_systems = ['Darwin']
+    compatible_systems = ['Darwin', 'Linux']
 
     def run(self, args):
         logger.debug("apps () was called.")
-        info("Getting installed printers now...")
 
         if (self.is_compatible()):
             print "\nInstalled printers:\n==================="
@@ -24,9 +22,12 @@ class PrintersModule(CrispyModule):
                     printers = self.client.conn.modules['os'].listdir('/private/etc/cups/ppd/')    
                     for p in printers:
                         print "{}\n".format(p[:-4])
+                elif self.client.is_linux():
+                    printers = self.client.conn.modules['subprocess'].check_output(['lpstat', 'a'])
+                    print printers #stdout is not being tunneled over connection, rather outputing on host
                 success("Done.")
             except Exception as e:
-                logger.error("{}: {}".format(__class_name__, e))
+                logger.error(e)
                 error(e)
         else:
             error("OS not implmented yet... help me code it?")
