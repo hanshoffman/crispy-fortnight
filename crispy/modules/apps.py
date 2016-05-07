@@ -14,7 +14,6 @@ class AppsModule(CrispyModule):
 
     def run(self, args):
         logger.debug("run(args) was called")
-        info("Getting installed apps now...")
 
         if (self.is_compatible()):
             print "\nInstalled applications:\n==================="
