@@ -16,3 +16,7 @@ def success(msg):
 def warning(msg):
     """ Return a formatted warning line to stdout. """
     print "\n{}[-] {}{}".format(colors["yellow"], msg, color_stop)
+
+def highlight(msg, color):
+    """ Return a string in the given color. """
+    print "{}{}{}".format(colors[color], msg, color_stop)
