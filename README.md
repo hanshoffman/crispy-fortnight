@@ -2,8 +2,8 @@
 Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to learn Python, understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions. 
 
 ## Generate RSA keys
-- openssl genrsa -out private.pem 2048
-- openssl rsa -in private.pem -pubout > crispy.pub
+- openssl genrsa -out crispy.pem -aes256 2048
+- openssl rsa -in crispy.pem -pubout > crispy.cert
 
 ## How to run things
 Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "tail -f crispy.log" to follow the log file on the server.
