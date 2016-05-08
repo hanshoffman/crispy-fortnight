@@ -16,21 +16,21 @@ class PSModule(CrispyModule):
         logger.debug("run(args) was called")
 
         if (self.is_compatible()):
-            spacing = "{:<5}{:<15}"
-            print spacing.format("PID", "Name")
+            spacing = "{:<20}{:<6}{:<15}"
+            print spacing.format("Username", "PID", "Name")
 
             cpid = self.client.conn.modules['os'].getpid()
             try:
 #                if self.client.is_darwin():
                     for proc in self.client.conn.modules['psutil'].process_iter():
                         try:
-                            pid = proc.as_dict(attrs=['pid', 'name'])
+                            pid = proc.as_dict(attrs=['username', 'pid', 'name'])
                         except psutil.NoSuchProcess:
                             pass
                         if pid['pid'] == cpid:
-                            highlight(spacing.format(pid['pid'], pid['name']), "yellow")
+                            highlight(spacing.format(pid['username'], pid['pid'], pid['name']), "yellow")
                         else:
-                            print spacing.format(pid['pid'], pid['name'])
+                            print spacing.format(pid['username'], pid['pid'], pid['name'])
             except Exception as e:
                 logger.error(e)
                 error(e)
