@@ -3,6 +3,7 @@ import __builtin__ as builtin
 import logging
 import ConfigParser
 
+from rpyc.utils.authenticators import SSLAuthenticator
 from crispy.lib.server import CrispyServer
 from crispy.lib.cli import CrispyCLI
 from crispy import __version__
@@ -28,11 +29,11 @@ def main():
     config = ConfigParser.ConfigParser()
     config.read(args.config_file)
     
-    addr = config.get("DAEMON", "addr")
-    port = config.getint("DAEMON", "port")
+    addr = config.get("DAEMON", "host"), config.getint("DAEMON", "port")
+    auth = SSLAuthenticator(config.get("CRYPTO", "keyfile"), config.get("CRYPTO", "certfile"), ciphers="AES256-SHA")
 
     try:
-        srv = CrispyServer(addr, port)
+        srv = CrispyServer(addr, auth)
         logging.info("Listening for connections, press <Ctrl-C> to quit")
         builtin.global_srv = srv
         srv.start()
