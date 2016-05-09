@@ -12,7 +12,10 @@ class CheckVM(CrispyModule):
     compatible_systems = ['all']
 
     signatures = ['virtualbox', 'iprt-VBoxWQueue', 'VBoxService', 'VBoxClient']
-
+    
+    #https://github.com/rapid7/metasploit-framework/blob/master/scripts/meterpreter/checkvm.rb
+    #can check registry keys on Windows
+    #what about mac/linux?
     def run(self, args):
         logger.info("VirtualModule() run")
         
