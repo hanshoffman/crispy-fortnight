@@ -4,3 +4,7 @@
 
 #Logs
 *.log
+
+#Keys
+*.pem
+*.pub

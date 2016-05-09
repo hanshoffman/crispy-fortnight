@@ -1,13 +1,13 @@
 # crispy-fortnight
 Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to learn Python, understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions. 
 
-## Generate RSA keys
-- openssl genrsa -out crispy.pem -aes256 2048
-- openssl rsa -in crispy.pem -pubout > crispy.cert
+## Generate Server RSA keys
+Place these self-signed keys in crispy/crypto
+- openssl req -new -x509 -keyout key.pem -out cert.pem -days 365 -nodes -newkey rsa:2048
 
 ## How to run things
 Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "tail -f crispy.log" to follow the log file on the server.
-ie. "python crispyd.py --config crispy.conf"
+- ie. "python crispyd.py --config crispy.conf"
 
 ## Contributors
 Shoutouts to people who have helped along the way either directly or indirectly.
@@ -19,23 +19,23 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 - RPyC creator @tomerfiliba https://github.com/tomerfiliba/rpyc
 
 ## Implemented modules
-<br>[x] upload - transfer a file to the remote client
-<br>[x] download - transfer a file from remote client to server
-<br>[ ] users - find all users
-<br>[ ] apps - find all installed applications
-<br>[ ] screenshot - take a screenshot of the remote client
-<br>[ ] checkav - determine probability of which (if any) AV is installed
-<br>[ ] checkvm - determine if client is running on a virtual instance
+- [x] upload - transfer a file to the remote client
+- [x] download - transfer a file from remote client to server
+- [x] users - find all users
+- [x] apps - find all installed applications
+- [ ] screenshot - take a screenshot of the remote client
+- [ ] checkav - determine probability of which (if any) AV is installed
+- [x] checkvm - determine if client is running on a virtual instance
 
 ## TODO
-<br>[x] set up proper packaging
-<br>[x] set up client/server communication
-<br>[x] add logging to server for debuggin purposes
-<br>[x] add upload/download functionality
-<br>[x] modularize code
-<br>[x] central session control
-<br>[ ] set up client/server authentication and stream encrytpion
-<br>[ ] create implant binaries using pyinstaller
-<br>[ ] add shell functionality
-<br>[ ] add tab completion
-<br>[ ] obfuscate implant binaries
+- [x] set up proper packaging
+- [x] set up client/server communication
+- [x] add logging to server for debuggin purposes
+- [x] add upload/download functionality
+- [x] modularize code
+- [x] central session control
+- [x] set up client/server authentication and stream encrytpion
+- [ ] create implant binaries using pyinstaller
+- [ ] add shell functionality
+- [ ] add tab completion
+- [ ] obfuscate implant binaries
