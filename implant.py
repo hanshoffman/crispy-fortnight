@@ -1,12 +1,10 @@
 import os
-import socket
 import sys
 
 from rpyc.core.service import Service, ModuleNamespace
 from crispy.network.client_type import SSLClient
 from rpyc.utils.factory import connect_stream
 from rpyc.core.stream import SocketStream
-from rpyc import Connection, Channel
 from rpyc.lib.compat import execute
 
 class ReverseSlave(Service):
