@@ -8,7 +8,6 @@ logger = logging.getLogger(__name__)
 
 from .. network.server_type import RPyCServer
 from .. network.service import CrispyService
-from .. network.client_type import SSLClient
 from . client import CrispyClient
 from .. lib.fprint import *
 
@@ -22,18 +21,6 @@ class CrispyServer(threading.Thread):
         self.host = addr[0]
         self.port = addr[1]
         self.srv = None
-        self.transport = {
-                "info": "Simple reverse TCP payload with SSL",
-                "server": self.srv,
-                "client": SSLClient,
-                "client_kwargs": {},
-                "authenticator": self.auth,
-                "stream": {},
-                "client_transport": {},
-                "server_transport": {},
-                "client_transport_kwargs": {},
-                "server_transport_kwargs": {},
-                }
         self.clients = []
         self.clients_lock = threading.Lock()
         self.current_id = 1

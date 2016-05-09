@@ -62,9 +62,7 @@ def main():
         host, port = sys.argv[1].split(":") 
 
         try:
-            #client = SSLClient(keyfile="key.pem", certfile="cert.pem")
-            client = SSLClient()
-            s = client.connect(host, int(port))
+            s = SSLClient().connect(host, int(port))
             conn = connect_stream(SocketStream(s), ReverseSlave, {})
 
             while True:
