@@ -13,7 +13,7 @@ Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "ta
 Shoutouts to people who have helped along the way either directly or indirectly.
 - Thanks to @jchristman for all the bug fixes and commits!
 - Thanks to @bts0 for the AES code.
-- Thanks to @WesleyThurner for the apps module code with versioning on mac!
+- Thanks to @WesleyThurner for the with various modules!
 - Thanks to @n1nj4sec for rpyc, cmd.Cmd and a few other examples in his similar and far superior Python RAT. After numerous attempts of mine to avoid using RPC, I came across this code when trying to find good examples on the R
 PyC library. I ended up modeling a large portion of my code after his. "good artists copy; great artists steal (Pablo Picasso)" https://github.com/n1nj4sec/pupy
 - RPyC creator @tomerfiliba https://github.com/tomerfiliba/rpyc
