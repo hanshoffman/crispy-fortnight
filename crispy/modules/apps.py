@@ -30,9 +30,12 @@ class AppsModule(CrispyModule):
                             except:
                                 print app[:-4] + " [No version in plist]"
                 elif self.client.is_unix():
+                    # Only gathers applications isntalled by a package manager
+                    # for additional package managers, add additional comand in package_managers
                     package_managers = ['dpkg --get-selections', 'yum list installed']
                     for a in package_managers:
                         try:
+                            #shlex splits string to ensure compatibility with check_output
                             command = shlex.split(a)
                             attempt_unix_apps = self.client.conn.modules['subprocess'].check_output(command)
                             print attempt_unix_apps
