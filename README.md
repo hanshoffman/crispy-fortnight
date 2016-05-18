@@ -1,5 +1,5 @@
 # crispy-fortnight
-Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to learn Python, understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions. 
+Custom, cross-platform Remote Access Terminal (RAT) coded in Python 2.7 built just for fun. The intent is to learn Python, understand the "inner-workings" of RAT's and improve detection of malicious behavior - not to create anything new. Features are added for purely educational learning, NOT for malicious activity! You are responsible for your own actions.
 
 ## Generate Server RSA keys
 Place these self-signed keys in crispy/crypto
@@ -8,6 +8,14 @@ Place these self-signed keys in crispy/crypto
 ## How to run things
 Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "tail -f crispy.log" to follow the log file on the server.
 - ie. "python crispyd.py --config crispy.conf"
+
+## Required Python libraries for crispyd server
+Package manager install:
+python-dev
+python-pip
+pip install:
+rpyc
+psutil
 
 ## Contributors
 Shoutouts to people who have helped along the way either directly or indirectly.
@@ -19,8 +27,23 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 - RPyC creator @tomerfiliba https://github.com/tomerfiliba/rpyc
 
 ## Implemented modules
-- [x] upload - transfer a file to the remote client
-- [x] download - transfer a file from remote client to server
+| Done | Name | Lin | Mac | Win | description |
+|---|---|---|---|---|---|
+|   | apps |   |   |   |   |
+|   | checkav |   |   |   |   |
+|   | checkvm |   |   |   |   |
+|[x]| download |   |   |   | transfer a file from remote client to server |
+|   | drives |   |   |   |   |
+|   | execute |   |   |   |   |
+|   | kill  |   |   |   |   |
+|   | netstat |   |   |   |   |
+|   | persistence  |   |   |   |   |
+|   | printers  |   |   |   |   |
+|   | ps |   |   |   |   |
+|   | search |   |   |   |   |
+| X | upload |   |   |   | transfer a file to the remote client |
+|   | users |   |   |   |   |
+- [x] download -
 - [x] users - find all users
 - [x] apps - find all installed applications
 - [ ] screenshot - take a screenshot of the remote client
