@@ -18,6 +18,9 @@ pip install:
 rpyc
 psutil
 
+## pyinstaller
+pyinstaller --onefile --hidden-import uuid --hidden-import psutil --hidden-import logging --hidden-import shlex implant.py
+
 ## Contributors
 Shoutouts to people who have helped along the way either directly or indirectly.
 - Thanks to @jchristman for all the bug fixes and commits!
