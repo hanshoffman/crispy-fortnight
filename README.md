@@ -28,27 +28,22 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 
 ## Implemented modules
 | Done | Name | Lin | Mac | Win | description |
-|---|---|---|---|---|---|
-|   | apps |   |   |   |   |
-|   | checkav |   |   |   |   |
-|   | checkvm |   |   |   |   |
-|[x]| download |   |   |   | transfer a file from remote client to server |
-|   | drives |   |   |   |   |
-|   | execute |   |   |   |   |
-|   | kill  |   |   |   |   |
-|   | netstat |   |   |   |   |
-|   | persistence  |   |   |   |   |
+|:---:|---|---|---|---|---|
+|   | apps | X | X |   | list all installed applications  |
+|   | checkav | X | X | X | determine probability of which (if any) AV is installed |
+|   | checkvm | X | X | X | determine id client is running on a virtual machine  |
+| X | download | X | X | X | transfer a file from remote client to server |
+| X | drives | X | X | X |  enumerate drives on client |
+|   | execute | X | X | X | execute binary on client |
+|   | kill  | X | X | X |  kill process on remote client |
+|   | netstat | X | X |   | perform netstat on remote client  |
+|   | persistence  |   |   |   | create persistence on remote client |
 |   | printers  |   |   |   |   |
 |   | ps |   |   |   |   |
+|   | screenshot |   |   |   | take a screenshot of the remote client |
 |   | search |   |   |   |   |
 | X | upload |   |   |   | transfer a file to the remote client |
-|   | users |   |   |   |   |
-- [x] download -
-- [x] users - find all users
-- [x] apps - find all installed applications
-- [ ] screenshot - take a screenshot of the remote client
-- [ ] checkav - determine probability of which (if any) AV is installed
-- [x] checkvm - determine if client is running on a virtual instance
+| X | users |   |   |   |  list all users |
 
 ## TODO
 - [x] set up proper packaging
@@ -62,3 +57,5 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 - [ ] add shell functionality
 - [ ] add tab completion
 - [ ] obfuscate implant binaries
+- [ ] improve checkav module signatures
+- [ ] improve checkvm module checks
