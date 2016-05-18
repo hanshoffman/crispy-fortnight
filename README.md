@@ -8,6 +8,7 @@ Place these self-signed keys in crispy/crypto
 ## How to run things
 Run crispyd.py(local) and implant.py(remote) at the root of the project. Use "tail -f crispy.log" to follow the log file on the server.
 - ie. "python crispyd.py --config crispy.conf"
+- optional " --loglvl=DEBUG"
 
 ## Required Python libraries for crispyd server
 Package manager install:
@@ -28,7 +29,7 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 
 ## Implemented modules
 | Done | Name | Lin | Mac | Win | description |
-|:---:|---|---|---|---|---|
+|:---:|:---:|:---:|:---:|:---:|---|
 |   | apps | X | X |   | list all installed applications  |
 |   | checkav | X | X | X | determine probability of which (if any) AV is installed |
 |   | checkvm | X | X | X | determine id client is running on a virtual machine  |
@@ -38,12 +39,12 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 |   | kill  | X | X | X |  kill process on remote client |
 |   | netstat | X | X |   | perform netstat on remote client  |
 |   | persistence  |   |   |   | create persistence on remote client |
-|   | printers  |   |   |   |   |
-|   | ps |   |   |   |   |
+|   | printers  | X | X |   | enumerate printers |
+|   | ps | X | X | X | process list of remote client |
 |   | screenshot |   |   |   | take a screenshot of the remote client |
 |   | search |   |   |   |   |
-| X | upload |   |   |   | transfer a file to the remote client |
-| X | users |   |   |   |  list all users |
+| X | upload | X | X | X | transfer a file to the remote client |
+| X | users | X | X |   |  list all users |
 
 ## TODO
 - [x] set up proper packaging
