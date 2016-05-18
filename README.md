@@ -42,7 +42,7 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 |   | printers  | X | X |   | enumerate printers |
 |   | ps | X | X | X | process list of remote client |
 |   | screenshot |   |   |   | take a screenshot of the remote client |
-|   | search |   |   |   |   |
+|   | search |   |   |   | search remote client for files |
 | X | upload | X | X | X | transfer a file to the remote client |
 | X | users | X | X |   |  list all users |
 
