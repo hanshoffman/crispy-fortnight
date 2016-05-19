@@ -10,7 +10,7 @@ class PSModule(CrispyModule):
     """ Get process list on a remote machine. """
 
     # can be: 'Darwin', 'Linux', 'Windows', 'Android'
-    compatible_systems = ['Darwin', 'Linux']
+    compatible_systems = ['Darwin', 'Linux', 'Windows']
 
     def run(self, args):
         logger.debug("run(args) was called")
