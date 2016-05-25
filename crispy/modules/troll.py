@@ -1,6 +1,5 @@
 import logging
 
-from crispy.lib.myparser import CrispyArgumentParser
 from crispy.lib.module import *
 from crispy.lib.fprint import *
 
@@ -10,13 +9,14 @@ __class_name__ = "TrollModule"
 class TrollModule(CrispyModule):
     """ Troll the victim. """
 
-    compatible_systems = ['all']
-
-    def check_args(self, args):
-        self.parser = CrispyArgumentParser(prog="troll", description=self.__doc__)
-        #self.parser.add_argument() 
-
-        return self.parser.parse_args(args)
+    compatible_systems = ['Windows']
 
     def run(self, args):
-        pass
+        logger.debug("troll run() was called")
+
+        if self.is_compatible():
+            info("Playing the empiral death march :)")
+
+            success("Done.")
+        else:
+            error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))
