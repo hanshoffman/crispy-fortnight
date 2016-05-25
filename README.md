@@ -27,7 +27,7 @@ Shoutouts to people who have helped along the way either directly or indirectly.
 - Thanks to @WesleyThurner for the help with various modules!
 - Thanks to @n1nj4sec for rpyc, cmd.Cmd and a few other examples in his similar and far superior Python RAT. After numerous attempts of mine to avoid using RPC, I came across this code when trying to find good examples on the R
 PyC library. I ended up modeling a large portion of my code after his. "good artists copy; great artists steal (Pablo Picasso)" https://github.com/n1nj4sec/pupy
-- RPyC creator @tomerfiliba https://github.com/tomerfiliba/rpyc
+- Thanks to RPyC creator @tomerfiliba for the coool library but the documentation on examples needs some serious help. I had nothing to go off of really so it forced me to copy someones code https://github.com/tomerfiliba/rpyc
 
 ## Implemented modules
 | Done | Name | Lin | Mac | Win | description |
@@ -44,7 +44,7 @@ PyC library. I ended up modeling a large portion of my code after his. "good art
 |   | printers  | X | X |   | enumerate printers |
 | X | ps | X | X | X | process list of remote client |
 |   | screenshot |   |   |   | take a screenshot of the remote client |
-|   | search |   |   |   | search remote client for files |
+| X  | search | X | X | X | search remote client for files |
 | X | upload | X | X | X | transfer a file to the remote client |
 | X | users | X | X |   |  list all users |
 
