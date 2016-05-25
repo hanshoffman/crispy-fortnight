@@ -1,5 +1,4 @@
 import logging
-import os
 
 from crispy.lib.module import *
 from crispy.lib.fprint import *
@@ -10,9 +9,15 @@ __class_name__ = "ScreenshotModule"
 class ScreenshotModule(CrispyModule):
     """ Take a screenshot of a remote machine. """
 
-    compatible_systems = ['darwin']
+    compatible_systems = ['Darwin']
 
     def run(self, args):
-        logger.debug("screenshot() was called.")
+        logger.debug("run(args) was called")
         info("Capturing screen on client...")
+        
+        if self.is_android():
+            pass
+        else:
+            pass
+        
         success("Done. File saved to \'\'")
