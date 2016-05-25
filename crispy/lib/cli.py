@@ -185,7 +185,7 @@ class CrispyCLI(cmd.Cmd):
         logger.debug("do_sessions() was called")
 	
         parser = CrispyArgumentParser(description=self.do_sessions.__doc__, prog="sessions")
-        parser.add_argument("-i", dest="interact", help="pop a shell on the given session", metavar="<session_id>", type=int)
+        parser.add_argument("-i", dest="interact", help="pop a shell on a given session", metavar="<session_id>", type=int)
         parser.add_argument("-k", dest="kill_id", help="kill the selected session", metavar="<session_id>", type=int)
         parser.add_argument("-l", action="store_true", dest="list", help="list all active sessions")
         
@@ -198,7 +198,10 @@ class CrispyCLI(cmd.Cmd):
                 if isinstance(pargs.interact, int):
                     fprint.info("Interacting w/ session {}...".format(pargs.interact))
                     client = self.srv.get_client(pargs.interact)
-                    interact(client.conn)
+                    try:
+                        interact(client.conn)
+                    except Exception as e:
+                        fprint.error(e)
                 elif isinstance(pargs.kill_id, int):
                     client = self.srv.get_client(pargs.kill_id)
                         
