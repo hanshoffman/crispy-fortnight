@@ -27,22 +27,30 @@ class CheckAVModule(CrispyModule):
 
     def run(self, args):
 	logger.debug("run(args) was called.")
-        info("Running through av list now...")
+        
+        if self.client.conn.modules['os'].geteuid() != 0:
+            error("psutil requires this module to be run with root privileges")
+            return
+        else:
+            info("Running through av list now...")
+            try:
+                for proc in self.client.conn.modules['psutil'].process_iter():
+                    try:
+                        pid = proc.as_dict(attrs=['username', 'pid', 'name'])
+                    except psutil.NoSuchProcess:
+                        pass
 
-        try:
-            for proc in self.client.conn.modules['psutil'].process_iter():
-                try:
-                    pid = proc.as_dict(attrs=['username', 'pid', 'name'])
-                except psutil.NoSuchProcess:
-                    pass
-                except psutil.ZombieProcess:
-                    pass
-
-                for av in self.av_list:
-                    for p in av['procs']:
-                        if p == proc.name():
-                            warning("Found {} w/ PID {}".format(av['name'], pid['pid']))
-                            return
-            success("Done.")
-        except Exception as e:
-            error(e)
+                    for av in self.av_list:
+                        for p in av['procs']:
+                            try:
+                                if p == proc.name():
+                                    warning("Found {} w/ PID {}".format(av['name'], pid['pid']))
+                                    return
+                            except:
+                                pass
+                success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
+            except Exception as e:
+                logger.error(e)
+                error(e)

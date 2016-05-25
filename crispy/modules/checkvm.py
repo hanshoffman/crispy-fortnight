@@ -18,15 +18,21 @@ class CheckVM(CrispyModule):
     #what about mac/linux?
     def run(self, args):
         logger.info("VirtualModule() run")
-        
-        # O(n^2) complexity
-        try:
-            for proc in self.client.conn.modules['psutil'].process_iter():
-                for sig in self.signatures:
-                    if sig in proc.name():
-                        warning("High probability remote host is a virtual machine.")
-                        return
-            success("Done.")
-        except Exception as e:
-            logger.error(e)
-            error(e)
+  
+        if self.client.conn.modules['os'].geteuid() != 0:
+            error("psutil requires this module to be run with root privileges")
+            return
+        else:
+            # O(n^2) complexity
+            try:
+                for proc in self.client.conn.modules['psutil'].process_iter():
+                    for sig in self.signatures:
+                        if sig in proc.name():
+                            warning("High probability remote host is a virtual machine.")
+                            return
+                success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
+            except Exception as e:
+                logger.error(e)
+                error(e)

@@ -9,8 +9,7 @@ __class_name__ = "PSModule"
 class PSModule(CrispyModule):
     """ Get process list on a remote machine. """
 
-    # can be: 'Darwin', 'Linux', 'Windows', 'Android'
-    compatible_systems = ['Darwin', 'Linux', 'Windows']
+    compatible_systems = ['all']
 
     def run(self, args):
         logger.debug("run(args) was called")
@@ -21,20 +20,20 @@ class PSModule(CrispyModule):
 
             cpid = self.client.conn.modules['os'].getpid()
             try:
-#                if self.client.is_darwin():
-                    for proc in self.client.conn.modules['psutil'].process_iter():
-                        try:
-                            pid = proc.as_dict(attrs=['username', 'pid', 'name'])
-                        except psutil.NoSuchProcess:
-                            pass
-                        if pid['pid'] == cpid:
-                            highlight(spacing.format(pid['username'], pid['pid'], pid['name']), "yellow")
-                        else:
-                            print spacing.format(pid['username'], pid['pid'], pid['name'])
+                for proc in self.client.conn.modules['psutil'].process_iter():
+                    try:
+                        pid = proc.as_dict(attrs=['username', 'pid', 'name'])
+                    except psutil.NoSuchProcess:
+                        pass
+                    if pid['pid'] == cpid:
+                        highlight(spacing.format(pid['username'], pid['pid'], pid['name']), "yellow")
+                    else:
+                        print spacing.format(pid['username'], pid['pid'], pid['name'])
+                success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
             except Exception as e:
                 logger.error(e)
                 error(e)
-
-            success("Done.")
         else:
             error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))
