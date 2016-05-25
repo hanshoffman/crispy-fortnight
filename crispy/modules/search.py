@@ -39,6 +39,8 @@ class SearchModule(CrispyModule):
                                 else:
                                     print "{}/{}".format(self.client.conn.modules['os'].path.realpath(dirpath), name)
             success("Done.")
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")
         except Exception as e:
             error(e)
             logger.error(e)

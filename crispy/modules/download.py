@@ -34,5 +34,7 @@ class DownloadModule(CrispyModule):
                 download(self.client.conn, args.remote_file, args.local_file)
                 logger.info("File transfer complete.")
                 success("File transfer complete.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
             except ValueError as e:
                 error("Cannot download file")

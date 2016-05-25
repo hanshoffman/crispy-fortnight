@@ -41,10 +41,11 @@ class AppsModule(CrispyModule):
                             print attempt_unix_apps
                         except OSError:
                             continue
+                success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
             except Exception as e:
                 logger.error(e)
                 error(e)
-
-            success("Done.")
         else:
             error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))

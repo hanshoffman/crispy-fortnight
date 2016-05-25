@@ -20,4 +20,7 @@ class PersistenceModule(CrispyModule):
 
     def run(self, args):
         # http://www.fuzzysecurity.com/tutorials/19.html
-        pass
+        try:
+            pass
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")

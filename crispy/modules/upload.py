@@ -28,6 +28,8 @@ class UploadModule(CrispyModule):
             upload(self.client.conn, args.local_file, args.remote_file)
             success("File transfer complete.")
             logger.info("File transfer complete.")
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")
         except ValueError as e:
             error("Cannot upload file")
             logger.error("File transfer failed.")

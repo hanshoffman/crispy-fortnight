@@ -24,6 +24,8 @@ class KillModule(CrispyModule):
         try:
             self.client.conn.modules['os'].kill(args.pid, 9)
             success("Done.")
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")
         except Exception as e:
             logger.error(e)
             error(e)

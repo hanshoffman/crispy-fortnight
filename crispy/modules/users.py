@@ -39,10 +39,11 @@ class UsersModule(CrispyModule):
                                 highlight(spacing.format(user[0], user[4], user[2], user[3], user[5], user[6]), "yellow")
                             else:
                                 print spacing.format(user[0], user[4], user[2], user[3], user[5], user[6])
+                success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
             except Exception as e:
                 logger.error(e)
                 error(e)
-            
-            success("Done.")
         else:
             error("Current OS's supported: {}".format(', '.join(self.compatible_systems)))

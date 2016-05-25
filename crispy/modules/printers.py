@@ -26,6 +26,8 @@ class PrintersModule(CrispyModule):
                     printers = self.client.conn.modules['subprocess'].check_output(['lpstat', 'a'])
                     print printers #stdout is not being tunneled over connection, rather outputing on host
                 success("Done.")
+            except KeyboardInterrupt:
+                logger.info("Caught Ctrl-C")
             except Exception as e:
                 logger.error(e)
                 error(e)

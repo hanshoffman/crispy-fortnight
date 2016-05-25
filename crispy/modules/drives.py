@@ -39,6 +39,8 @@ class DrivesModule(CrispyModule):
                 usage = self.client.conn.modules['psutil'].disk_usage(part.mountpoint)
                 print spacing.format(part.device, self.bytes2human(usage.total), self.bytes2human(usage.used), self.bytes2human(usage.free), int(usage.percent), part.fstype, part.mountpoint)
             success("Done.")
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")
         except Exception as e:
             logger.error(e)
             error(e)

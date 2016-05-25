@@ -32,6 +32,8 @@ class ExecuteModule(CrispyModule):
                 sucess("{} was started successfully.".format("program"))
             else:
                 error("{} returned error exit code".format("program"))
+        except KeyboardInterrupt:
+            logger.info("Caught Ctrl-C")
         except Exception as e:
             logger.error(e)
             error(e)
